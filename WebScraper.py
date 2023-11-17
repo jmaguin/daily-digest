@@ -10,7 +10,7 @@ class WebScraper(ABC):
     # Get pages for each tag/category
     # Get articles from each page
     @abstractmethod
-    def __init__(self):
+    def __init__(self, num_of_entries):
         pass
 
     # Returns List of all articles gathered by scraper

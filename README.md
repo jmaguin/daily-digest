@@ -5,6 +5,13 @@
 2. run 'python main.py'  
 Note: sqlite3 is included in Python. No install is necessary.
 
+## Creating a New Scraper:
+1. Create a new file and within it the scraper class
+2. Extend the abstract class WebScraper.py
+4. Study the HTML structure of the desired webpage
+3. Implement the required methods
+- look at other files as examples
+
 ## Files:
 main.py  
 WebScraper.py  
@@ -20,14 +27,15 @@ Data sources:
 - abstract class to construct all web scrapers from
 - methods:
     ```
-    def __init__(self)
+    def __init__(self, num_of_entries)
+        # num_of_entries = number of entries in the database table
         # initialization of the object
         # define tags/categories to collect data for
         # get pages for each tag/category
         # get articles from each page
         
-    def get_articles(self)
-        # returns a List of all articles gathered by the scraper
+    def get_articles(self, tag)
+        # returns a List of all articles in from specified tag gathered by the scraper
         
     def get_tags(self)
         # returns a List of all of the tags/categories specified in __init__
@@ -41,7 +49,7 @@ Data sources:
 - stores all data from all web scrapers
 - Table entries are:
     - source:   String      name of source
-    - tags:     List        list of relevant tags
+    - tag:      String      relevant tag
     - date:     datetime    date of publication
     - content:  String      content of article
 - methods:
