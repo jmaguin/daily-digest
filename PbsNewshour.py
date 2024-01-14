@@ -10,30 +10,43 @@ class PbsNewshour(WebScraper):
     def __init__(self, num_of_entries):
         self.CONST_NUM_ENTRIES = num_of_entries   # number of table entries in database
         baseURL = "https://www.pbs.org/newshour/"
-        self.tags = ["politics", "arts", "economy", "science", "health", "education"]    # all tags for PBS
+
+        # Dictionary of all articles
+        # Key: tag name     Value: List of articles in soup form
+        self.articles = {"politics": [],
+                         "arts": [],
+                         "economy": [],
+                         "science": [],
+                         "health": [],
+                         "education": [],
+                         "world": [],
+                         "nation": []
+                        }     # all tags for PBS
+
+        self.tags = list(self.articles.keys())
 
         # Build list of all relevant articles
-        # Key: tag name     Value: List of articles
-        self.articles = {}
         for tag in self.tags:
-            page = requests.get(baseURL + tag)                  # get page
-            soup = BeautifulSoup(page.content, "html.parser")   # soupify
-            
+            art_count = 0   # num of articles found for this tag
+            tag_home_page = requests.get(baseURL + tag)                  # get page
+            tag_home_soup = BeautifulSoup(tag_home_page.content, "html.parser")   # soupify
+
             # Grab links to all articles from current tag/category
             # links_set: Type ResultSet
-            links_set = soup.find_all("a", class_=["home-hero__title", "card-xl__title", "card-md__title",
-                                                      "card-sm__title", "card-horiz__title", "card-thumb__link"])
-            
+            links_set = tag_home_soup.find_all("a", class_=["home-hero__title", "card-xl__title", "card-lg__title",
+                                                    "card-lg__title card-lg__title--with-space", "card-md__title",
+                                                    "card-sm__title", "card-horiz__title", "card-thumb__link"])
+
             # Retrieve articles from links_set
             # Add articles to self.articles
-            temp_list = []
             for link in links_set:
-                page = requests.get(link["href"])
-                soup = BeautifulSoup(page.content, "html.parser")
-                temp_list.append(soup)
-            
-            self.articles[tag] = temp_list
-            temp_list.clear()
+                link_page = requests.get(link["href"])
+                link_soup = BeautifulSoup(link_page.content, "html.parser")
+                self.articles[tag].append(link_soup)
+                art_count+=1
+
+            print("SOURCE: PBS | TAG: " + tag + " | ARTICLES LOGGED: " + str(art_count) + "\n")
+            break
 
     # Returns List of all articles from specified tag gathered by scraper
     # Used to place articles into database
@@ -72,9 +85,10 @@ class PbsNewshour(WebScraper):
         return self.tags
 
     # Print out all found articles
-    # Key: tag      Value: articles
     def print_articles(self):
-        for tag in self.articles:
-            print("------------" + "TAG: " + tag + "------------")
+        for tag in self.tags:
+            count = 1
+            print("\n------------ " + "TAG: " + tag + " ------------\n")
             for article in self.articles[tag]:
-                print(article.prettify())
+                print("(" + str(count) + ") " + article.find("h1").get_text())
+                count+=1
