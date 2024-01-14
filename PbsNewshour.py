@@ -32,7 +32,6 @@ class PbsNewshour(WebScraper):
 
             # Get articles from pages 1-10
             for page_num in range(1, page_range+1):
-                print(str(page_num) + "\n")
                 page_num_base = "/page/"
                 tag_home_page = requests.get(baseURL + tag + page_num_base + str(page_num)) # get page
                 tag_home_soup = BeautifulSoup(tag_home_page.content, "html.parser")         # soupify
@@ -52,7 +51,6 @@ class PbsNewshour(WebScraper):
                     art_count+=1
 
             print("SOURCE: PBS | TAG: " + tag + " | ARTICLES LOGGED: " + str(art_count) + "\n")
-            break
 
     # Returns List of all articles from specified tag gathered by scraper
     # Used to place articles into database
