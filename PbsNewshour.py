@@ -10,6 +10,7 @@ class PbsNewshour(WebScraper):
     def __init__(self, num_of_entries):
         self.CONST_NUM_ENTRIES = num_of_entries   # number of table entries in database
         baseURL = "https://www.pbs.org/newshour/"
+        page_range = 10 # how many pages to get articles from
 
         # Dictionary of all articles
         # Key: tag name     Value: List of articles in soup form
@@ -28,22 +29,27 @@ class PbsNewshour(WebScraper):
         # Build list of all relevant articles
         for tag in self.tags:
             art_count = 0   # num of articles found for this tag
-            tag_home_page = requests.get(baseURL + tag)                  # get page
-            tag_home_soup = BeautifulSoup(tag_home_page.content, "html.parser")   # soupify
 
-            # Grab links to all articles from current tag/category
-            # links_set: Type ResultSet
-            links_set = tag_home_soup.find_all("a", class_=["home-hero__title", "card-xl__title", "card-lg__title",
-                                                    "card-lg__title card-lg__title--with-space", "card-md__title",
-                                                    "card-sm__title", "card-horiz__title", "card-thumb__link"])
+            # Get articles from pages 1-10
+            for page_num in range(1, page_range+1):
+                print(str(page_num) + "\n")
+                page_num_base = "/page/"
+                tag_home_page = requests.get(baseURL + tag + page_num_base + str(page_num)) # get page
+                tag_home_soup = BeautifulSoup(tag_home_page.content, "html.parser")         # soupify
 
-            # Retrieve articles from links_set
-            # Add articles to self.articles
-            for link in links_set:
-                link_page = requests.get(link["href"])
-                link_soup = BeautifulSoup(link_page.content, "html.parser")
-                self.articles[tag].append(link_soup)
-                art_count+=1
+                # Grab links to all articles from current tag/category
+                # links_set: Type ResultSet
+                links_set = tag_home_soup.find_all("a", class_=["home-hero__title", "card-xl__title", "card-lg__title",
+                                                        "card-lg__title card-lg__title--with-space", "card-md__title",
+                                                        "card-sm__title", "card-horiz__title", "card-thumb__link"])
+                
+                # Retrieve articles from links_set
+                # Add articles to self.articles
+                for link in links_set:
+                    link_page = requests.get(link["href"])
+                    link_soup = BeautifulSoup(link_page.content, "html.parser")
+                    self.articles[tag].append(link_soup)
+                    art_count+=1
 
             print("SOURCE: PBS | TAG: " + tag + " | ARTICLES LOGGED: " + str(art_count) + "\n")
             break
