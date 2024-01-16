@@ -37,13 +37,14 @@ Data sources:
 ### Database.py
 - sqlite3 persistent databse
 - stores all data from all web scrapers
+- all table columns are Strings
 - Table columns are:
-    - source:   String      name of source
-    - title:    String      title of article
-    - tag:      String      relevant tag
-    - date:     String      date of publication
-    - url:      String      URL of article
-    - content:  String      content of article
+    - source: name of source
+    - title: title of article
+    - tag: relevant tag
+    - date: date of publication
+    - url: URL of article
+    - content: content of article
 
 - methods:
     ```
