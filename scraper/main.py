@@ -1,7 +1,9 @@
 #file: main.py
+import sys
 from bs4 import BeautifulSoup
-from Database import Database
 from PbsNewshour import PbsNewshour
+sys.path.insert(1, "../database")
+from Database import Database
 
 print("Program running!\n")
 

@@ -1,4 +1,4 @@
-#file ScraperDatabase.py
+#file Database.py
 
 import sqlite3;
 
@@ -11,7 +11,7 @@ class Database:
         print("Connecting to database...\n")
         # Open connection
         # If database does not exist, create it
-        self.con = sqlite3.connect("scraper_data.db")
+        self.con = sqlite3.connect("../database/scraper_data.db")
         self.cur = self.con.cursor()
 
         print("Database connected.\n")
