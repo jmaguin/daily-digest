@@ -6,25 +6,21 @@ from abc import ABC, abstractmethod;
 class WebScraper(ABC):
 
     # Initialize object
-    # Define tags/categories to collect data for
+    # Define tags to collect data for
     # Get pages for each tag/category
     # Get articles from each page
     @abstractmethod
-    def __init__(self, num_of_entries):
+    def __init__(self):
         pass
 
-    # Returns List of all articles (soup form)
-    # Used to place articles into database
+    # Retrieve all information about article from its URL
+    # Returns Article oject
+    # Returns None if fails
     @abstractmethod
-    def get_articles(self):
+    def create_article(self, tag, url):
         pass
 
-    # Returns List of all tags/categories from site
-    @abstractmethod
-    def get_tags(self):
-        pass
-
-    # Print found articles' titles & tags
+    # Print found articles
     @abstractmethod
     def print_articles(self):
         pass
