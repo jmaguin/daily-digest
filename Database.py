@@ -14,6 +14,9 @@ class Database:
         self.con = sqlite3.connect("scraper_data.db")
         self.cur = self.con.cursor()
 
+        print("Database connected.\n")
+
+
         # Create table in database
         # Format    source: Type String, name of source
         #           title: Type String, title of article
@@ -47,5 +50,6 @@ class Database:
     # Closes connection to database
     def __del__(self):
         self.con.close()
+        print("Database connection closed.")
 
 
