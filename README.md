@@ -20,29 +20,34 @@ Data sources:
 - PbsNewshour.py  
 
 ### main.py
-- creates new instances of all data sources
-- saves collected data to sqlite3 database
+- creates new instances of all scrapers
+- saves collected articles to sqlite3 database
+- methods:
+    ```
+    def add_articles_to_db(source, data):
+        # Adds articles to the database
+        # Parameters
+            # source: String. source name
+            # data: Dictionary. values = list of articles, keys = tags
 
 ### WebScraper.py
 - abstract class to construct all web scrapers from
 - methods:
     ```
-    def __init__(self, num_of_entries)
-        # num_of_entries = number of entries in the database table
+    def __init__(self)
         # initialization of the object
         # define tags/categories to collect data for
         # get pages for each tag/category
         # get articles from each page
         
-    def get_articles(self, tag)
-        # returns a List of all articles in from specified tag gathered by the scraper
+    def get_articles(self)
+        # returns a List of all articles (in soup form) gathered by the scraper
         
     def get_tags(self)
         # returns a List of all of the tags/categories specified in __init__
 
     def print_articles(self)
-        # prints all found articles in the format:
-            # <Article Title>: tag1, tag2, tag3 ...
+        # prints all found articles
     ```
 ### Database.py
 - sqlite3 persistent databse
@@ -60,8 +65,17 @@ Data sources:
         # if db does not exist, create it
         # create table in the database with above entries
 
-    def insert_article(source, tags, date, content)
+    def insert_article(source, tag, date, content)
         # inserts an article with the above information into the database
+    
+     
+    def get_articles(self, tag):
+        # Gets all matching articles from database by tag
+        # Returns empty list if no matches
+
+    def __del__(self):
+        # Destructor
+        # Closes connection to database
     ```
     
 
