@@ -2,7 +2,7 @@
 
 ## Running instructions:
 1. Download project
-2. run 'python main.py'  
+2. run ```python main.py``` or ```python -W ignore main.py``` to ignore warnings  
 Note: sqlite3 is included in Python. No install is necessary.
 
 ## Creating a New Scraper:
@@ -13,11 +13,11 @@ Note: sqlite3 is included in Python. No install is necessary.
 - look at other files as examples
 
 ## Files:
-Article.py
-Database.py
-main.py
-ProgressBar.py
-WebScraper.py  
+Article.py  
+Database.py  
+main.py  
+ProgressBar.py  
+WebScraper.py    
 
 Data sources:  
 - PbsNewshour.py  
@@ -73,7 +73,6 @@ Data sources:
 - creates new instances of all scrapers
 - creates new instance of database
 - saves collected articles to sqlite3 database
-- instantiate with ```python -W ignore main.py``` to ignore warnings
 
 ### ProgressBar.py
 - prints progress as scraper is working
