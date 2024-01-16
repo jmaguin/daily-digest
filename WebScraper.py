@@ -1,4 +1,4 @@
-#file abstract.py
+#file WebScraper.py
 
 from abc import ABC, abstractmethod;
 
@@ -13,7 +13,7 @@ class WebScraper(ABC):
     def __init__(self, num_of_entries):
         pass
 
-    # Returns List of all articles gathered by scraper
+    # Returns List of all articles (soup form)
     # Used to place articles into database
     @abstractmethod
     def get_articles(self):
