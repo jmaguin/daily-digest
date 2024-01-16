@@ -1,16 +1,19 @@
+#file: PbsNewshour.py
 import requests
-from WebScraper import WebScraper
 from bs4 import BeautifulSoup
+from ProgressBar import ProgressBar
+from WebScraper import WebScraper
+
 
 # Class to gather data from Pbs NewsHour
 # Base URL: https://www.pbs.org/newshour/
 class PbsNewshour(WebScraper):
 
     # Initialize the object
-    def __init__(self, num_of_entries):
-        self.CONST_NUM_ENTRIES = num_of_entries   # number of table entries in database
+    def __init__(self):
+        print("PBS Scraper Started.\n")
         baseURL = "https://www.pbs.org/newshour/"
-        page_range = 10 # how many pages to get articles from
+        page_range = 1 # how many pages to get articles from
 
         # Dictionary of all articles
         # Key: tag name     Value: List of articles in soup form
@@ -29,8 +32,9 @@ class PbsNewshour(WebScraper):
         # Build list of all relevant articles
         for tag in self.tags:
             art_count = 0   # num of articles found for this tag
+            prog_bar = ProgressBar(page_range)
 
-            # Get articles from pages 1-10
+            # Get articles from pages 1 - page_range
             for page_num in range(1, page_range+1):
                 page_num_base = "/page/"
                 tag_home_page = requests.get(baseURL + tag + page_num_base + str(page_num)) # get page
@@ -49,40 +53,16 @@ class PbsNewshour(WebScraper):
                     link_soup = BeautifulSoup(link_page.content, "html.parser")
                     self.articles[tag].append(link_soup)
                     art_count+=1
+                
+                prog_bar.update_progress()
 
-            print("SOURCE: PBS | TAG: " + tag + " | ARTICLES LOGGED: " + str(art_count) + "\n")
+            print("\nSOURCE: PBS | TAG: " + tag + " | ARTICLES LOGGED: " + str(art_count) + "\n")
+            break
 
-    # Returns List of all articles from specified tag gathered by scraper
+    # Returns List of all articles (soup form)
     # Used to place articles into database
-    def get_articles(self, tag):
-        # Ensure tag exists in list
-        if tag in self.tags:
-            num_of_articles = len(self.articles[tag])   # number of articles in specified tag/category
-
-            # Creates list of num_of_articles lists, each with CONST_NUM_ENTRIES items
-            # Stores all data for each collected article - source, tag, date, etc.
-            article_data = [["" for x in range(self.CONST_NUM_ENTRIES)] for y in range(num_of_articles)]   
-
-            # Iterate thru all articles. Retrieve their data and put them into article_data
-            for i in range(num_of_articles):
-                # ORDER IMPORTANT
-                article_data[i].append("PBS NewsHour")   # Add name of source
-                article_data[i].append(tag)              # Add tag
-
-                article_data[i].append(self.articles[tag][i].find("time", class_="post__date")["content"])   # Add the date
-
-                # Add content of article
-                # Series of <p> tags
-                text = ""
-                paragraphs = self.articles[tag][i].find("div", class_="body-text").find_all("p")
-                for paragraph in paragraphs:
-                    text = text + paragraph.text
-
-                article_data[i].append(text)    # add article body text
-        
-        # Tag not in list
-        else:
-            return -1
+    def get_articles(self):
+        return self.articles
     
     # Returns List of all tags/categories from site
     def get_tags(self):
