@@ -13,22 +13,82 @@ Note: sqlite3 is included in Python. No install is necessary.
 - look at other files as examples
 
 ## Files:
-main.py  
+Article.py
+Database.py
+main.py
+ProgressBar.py
 WebScraper.py  
-Database.py  
+
 Data sources:  
 - PbsNewshour.py  
 
-### main.py
-- creates new instances of all scrapers
-- saves collected articles to sqlite3 database
+### Article.py
+- class to define each Article collected by the scrapers
 - methods:
     ```
-    def add_articles_to_db(source, data):
-        # Adds articles to the database
-        # Parameters
-            # source: String. source name
-            # data: Dictionary. values = list of articles, keys = tags
+    def __init__(self, source, title, tag, date, url, content):
+        # Constructor
+        # All variables are Strings
+    
+    def get_tuple(self):
+        # Returns a formatted tuple for use in SQL querys
+    ```
+
+### Database.py
+- sqlite3 persistent databse
+- stores all data from all web scrapers
+- Table columns are:
+    - source:   String      name of source
+    - title:    String      title of article
+    - tag:      String      relevant tag
+    - date:     String      date of publication
+    - url:      String      URL of article
+    - content:  String      content of article
+
+- methods:
+    ```
+    def __init__(self)
+        # initializes the database (db)
+        # Opens the connection to the db
+        # if db does not exist, create it
+        # create table in the database with columns defined above
+
+    def insert_article(self, article)
+        # inserts an Article object into the database
+        # ensures there are no duplicates
+    
+    def get_articles(self, tag):
+        # Gets all matching articles from database by tag
+        # Returns empty list if no matches
+  
+    def print_articles(self, tag):
+        # Prints articles with specified tag
+
+    def __del__(self):
+        # Destructor
+        # Closes connection to database
+    ```
+
+### main.py
+- creates new instances of all scrapers
+- creates new instance of database
+- saves collected articles to sqlite3 database
+- instantiate with ```python -W ignore main.py``` to ignore warnings
+
+### ProgressBar.py
+- prints progress as scraper is working
+- methods:
+    ```
+    def __init__(self, page_range, tag):
+        # Constructor
+        # page_range    int     # of pages being scraped
+        # tag           String  tag being scraped
+        # Initialize and print progress bar
+    
+    def update_progress(self):
+        # Reprints progress bar
+        # Call when scraper reaches next page
+    ```
 
 ### WebScraper.py
 - abstract class to construct all web scrapers from
@@ -39,43 +99,16 @@ Data sources:
         # define tags/categories to collect data for
         # get pages for each tag/category
         # get articles from each page
-        
-    def get_articles(self)
-        # returns a List of all articles (in soup form) gathered by the scraper
-        
-    def get_tags(self)
-        # returns a List of all of the tags/categories specified in __init__
+    
+    def create_article(self, tag, url):
+        # tag   String  tag of article
+        # url   String  url of article
+        # Retrieve all information about article from its URL
+        # Returns Article oject
+        # Returns None if fails
 
     def print_articles(self)
         # prints all found articles
-    ```
-### Database.py
-- sqlite3 persistent databse
-- stores all data from all web scrapers
-- Table entries are:
-    - source:   String      name of source
-    - tag:      String      relevant tag
-    - date:     datetime    date of publication
-    - content:  String      content of article
-- methods:
-    ```
-    def __init__(self)
-        # initializes the database (db)
-        # Opens the connection to the db
-        # if db does not exist, create it
-        # create table in the database with above entries
-
-    def insert_article(source, tag, date, content)
-        # inserts an article with the above information into the database
-    
-     
-    def get_articles(self, tag):
-        # Gets all matching articles from database by tag
-        # Returns empty list if no matches
-
-    def __del__(self):
-        # Destructor
-        # Closes connection to database
     ```
     
 
