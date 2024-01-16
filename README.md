@@ -1,8 +1,8 @@
-# web-scraper
+# daily-digest
 
-## Running instructions:
+## Scraper Running instructions:
 1. Download project
-2. run ```python main.py``` or ```python -W ignore main.py``` to ignore warnings  
+2. navigate to /daily-digest/scraper. run ```python main.py``` or ```python -W ignore main.py``` to ignore warnings  
 Note: sqlite3 is included in Python. No install is necessary.
 
 ## Creating a New Scraper:
