@@ -5,16 +5,16 @@ class Article:
     
     # Constructor
     # All variables are Strings
-    def __init__(self, source, title, tag, date, url, content):
-        self.source = str(source)
-        self.title = str(title)
+    def __init__(self, tag, title, source, date, url, content):
         self.tag = str(tag)
+        self.title = str(title)
+        self.source = str(source)
         self.date = str(date)
         self.url = str(url)
         self.content = str(content)
 
     # Returns a formatted tuple for use in SQL querys
     def get_tuple(self):
-        return (self.source, self.title, self.tag, self.date, self.url, self.content)
+        return (self.tag, self.title, self.source, self.date, self.url, self.content)
 
 

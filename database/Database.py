@@ -17,14 +17,15 @@ class Database:
         print("Database connected.\n")
 
 
-        # Create table in database
-        # Format    source: Type String, name of source
+        # Create table in database. Index off tag
+        # Format    tag: Type String, category of article
         #           title: Type String, title of article
-        #           tag: Type String, category of article
+        #           source: Type String, name of source
         #           date: Type String, date of publication
         #           url: Type String, URL of article
         #           content: Type String, content of article
-        self.cur.execute("CREATE TABLE IF NOT EXISTS articles(source, title, tag, date, url, content)")
+        self.cur.execute("CREATE TABLE IF NOT EXISTS articles(tag, title, source, date, url, content)")
+        self.cur.execute("CREATE INDEX tag_idx ON articles(tag)")
 
     # Insert article into database
     # Ensures no duplicates
@@ -38,12 +39,12 @@ class Database:
     # Get articles from database by tag
     # Returns empty list if no matches
     def get_articles(self, tag):
-        res = self.cur.execute("SELECT source, date, url, content FROM articles WHERE tag = %s ORDER BY date" % tag)
+        res = self.cur.execute("SELECT * FROM articles WHERE tag = ?", (tag,))
         return res.fetchall()
 
     # Prints articles with specified tag
     def print_articles(self, tag):
-        res = self.cur.execute("SELECT source, date, url, content FROM articles WHERE tag = %s ORDER BY date" % tag)
+        res = self.cur.execute("SELECT * FROM articles WHERE tag = ?", (tag,))
         print(*(res.fetchall()), sep="\n")
 
     # Destructor

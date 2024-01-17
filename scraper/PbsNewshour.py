@@ -28,7 +28,7 @@ class PbsNewshour(WebScraper):
                          "world",
                          "nation"
                     ] 
-        
+
         # List of all articles from PBS
         self.articles = []
 
@@ -99,7 +99,7 @@ class PbsNewshour(WebScraper):
             warnings.warn("\nWARNING: Could not locate article content.\n\tArticle: %s\n\tError: %s" % (url, e))
             return None
 
-        return Article(self.source_name, title, tag, date, url, content)
+        return Article(tag, title, self.source_name, date, url, content)
 
     # Print out all found articles
     def print_articles(self):
