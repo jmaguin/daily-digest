@@ -92,9 +92,9 @@ class PbsNewshour(WebScraper):
 
         # get content
         try:
-            content = soup.find("div", class_=["body-text"]).get_text()  # text from normal article
+            content = soup.find("div", class_="body-text").get_text()  # text from normal article
         except KeyError:
-            content = soup.find("div", class_=["vt__excerpt body-text"]).get_text()  # text excerpt from show
+            content = soup.find("div", class_="vt__excerpt body-text").get_text()  # text excerpt from show
         except Exception as e:
             warnings.warn("\nWARNING: Could not locate article content.\n\tArticle: %s\n\tError: %s" % (url, e))
             return None
