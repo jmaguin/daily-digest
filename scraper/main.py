@@ -24,7 +24,7 @@ npr = Npr()
 for article in npr.articles:
     # Keep tag names consistent. (PBS uses "nation")
     if(article.tag == "national"):
-        article.tag == "nation"
+        article.tag = "nation"
     db.insert_article(article)
 
 # Add AP articles to database
