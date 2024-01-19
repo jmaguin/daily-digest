@@ -25,7 +25,7 @@ class Database:
         #           url: Type String, URL of article
         #           content: Type String, content of article
         self.cur.execute("CREATE TABLE IF NOT EXISTS articles(tag, title, source, date, url, content)")
-        self.cur.execute("CREATE INDEX tag_idx ON articles(tag)")
+        self.cur.execute("CREATE INDEX IF NOT EXISTS tag_idx ON articles(tag)")
 
     # Insert article into database
     # Ensures no duplicates
