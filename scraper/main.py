@@ -35,16 +35,13 @@ master_tags = ["politics",
 # Instantiate database
 db = Database()
 
-# Instantiate scrapers
-pbs_newshour = PbsNewshour()
-npr = Npr()
-ap = Ap()
-
 # Add PBS Newshour articles to database
+pbs_newshour = PbsNewshour()
 for article in pbs_newshour.articles:
     db.insert_article(article)
 
 # Add NPR articles to database
+npr = Npr()
 for article in npr.articles:
     # Keep tag names consistent. (PBS uses "nation")
     if(article.tag == "national"):
@@ -52,6 +49,7 @@ for article in npr.articles:
     db.insert_article(article)
 
 # Add AP articles to database
+ap = Ap()
 for article in ap.articles:
     # Keep tag names consistent
     if(article.tag == "world-news"):
