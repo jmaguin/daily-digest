@@ -1,7 +1,7 @@
 #file: main.py
 import sys
-from Ap import Ap
 from bs4 import BeautifulSoup
+from Ap import Ap
 from Npr import Npr
 from PbsNewshour import PbsNewshour
 sys.path.insert(1, "../database")
