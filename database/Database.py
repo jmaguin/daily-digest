@@ -1,5 +1,4 @@
 #file Database.py
-
 import sqlite3;
 
 # Class for the database that stores all web scraper data.
