@@ -1,10 +1,10 @@
 # daily-digest
 
-## Installtion Instructions:
+## Installation Instructions:
 1. Download project
 2. Install GPT4All with ```pip install gpt4all```
 3. Download a GPT4All model from: https://gpt4all.io/index.html
-4. Place the ".gguf" model into the /models/ folder.
+4. Place the ".gguf" model into the /daily-digest/models/ folder.
 5. Ensure the Enum in /language_model/model_enum.py is updated to reflect the downloaded model's file path.
 
 ## Scraper Running instructions:
@@ -21,7 +21,7 @@ Note: sqlite3 is included in Python. No install is necessary.
 
 ## Summarizer Running Instructions:
 1. Download project
-2. navigate to /daily-digest/language_model. run ```python summarizer_main.py```
+2. navigate to /daily-digest/language_model. run ```python summarizer.py```
 Note: Ensure GPT4All is installed.
 
 ## Files:
@@ -150,5 +150,3 @@ Place your .gguf models here
 
 ### summarizer.py   
 - Instantiates a new GPT4All instance using the specified model
-
-### summarizer_main.py   

@@ -3,6 +3,8 @@
 import time
 from gpt4all import GPT4All
 from language_model.model_enum import Model
+sys.path.insert(1, "../database")
+from Database import Database
 
 print("Running ...")
 start_time = time.time()
