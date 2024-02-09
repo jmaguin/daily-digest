@@ -1,18 +1,11 @@
-#file: model.py
+#file: summarizer.py
 
-from enum import Enum
-from pathlib import Path
-from os.path import abspath
 import time
 from gpt4all import GPT4All
+from language_model.model_enum import Model
 
 print("Running ...")
 start_time = time.time()
-
-# track downloaded models
-class Model(Enum):
-    MISTRAL = abspath("../models/mistral-7b-instruct-v0.1.Q4_0.gguf").replace('\\','/')
-    ORCA = abspath("../models/orca-mini-3b-gguf2-q4_0.gguf").replace('\\','/')
 
 model = GPT4All(str(Model.MISTRAL.value))  # create model
 
