@@ -3,7 +3,7 @@
 import time
 import sys
 from gpt4all import GPT4All
-from language_model.model_enum import Model
+from model_enum import Model
 sys.path.insert(1, "../database")
 from Database import Database
 
