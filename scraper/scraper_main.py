@@ -1,8 +1,9 @@
-#file: main.py
+#file: scaper_main.py
 import sys
 from bs4 import BeautifulSoup
 from Ap import Ap
 from Npr import Npr
+from Cnn import Cnn
 from PbsNewshour import PbsNewshour
 sys.path.insert(1, "../database")
 from Database import Database
@@ -60,3 +61,10 @@ for article in ap.articles:
         article.tag = "nation"
     db.insert_article(article)
 
+# Add Cnn articles to database
+cnn = Cnn()
+for article in cnn.articles:
+    # Keep tag names consistent
+    if(article.tag == "us"):
+        article.tag = "nation"
+    db.insert_article(article)
