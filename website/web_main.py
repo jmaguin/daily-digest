@@ -1,54 +1,57 @@
+import sys
 from datetime import datetime as dt
-
 from pyscript import document
 from pyweb import pydom
 
-tasks = []
+articles = []
 
 def q(selector, root=document):
     return root.querySelector(selector)
 
-# define the task template that will be use to render new templates to the page
-# Note: We use JS element here because pydom doesn't fully support template 
-#       elements now
-task_template = pydom.Element(q("#task-template").content.querySelector(".task"))
+# Instantiate database
+# db = Database()
 
-task_list = pydom["#list-tasks-container"][0]
-new_task_content = pydom["#new-task-content"][0]
+# article and dropdown templates
+# used to add new articles
+article_template = pydom.Element(q("#article-template").content.querySelector("label"))
+dropdown_template = pydom.Element(q("#dropdown-template").content.querySelector("option"))
+
+article_list = pydom["#list-tasks-container"][0]
+new_article_content = pydom["#new-task-content"][0]
 
 
 def add_task(e):
     # ignore empty task
-    if not new_task_content.value:
+    if not new_article_content.value:
         return None
 
     # create task
-    task_id = f"task-{len(tasks)}"
-    task = {
+    task_id = f"task-{len(articles)}"
+    article = {
         "id": task_id,
-        "content": new_task_content.value,
+        "content": new_article_content.value,
         "done": False,
         "created_at": dt.now(),
     }
 
-    tasks.append(task)
+    articles.append(article)
 
     # add the task element to the page as new node in the list by cloning from a
     # template
-    task_html = task_template.clone()
-    task_html.id = task_id
+    article_html = article_template.clone()
+    article_html.id = task_id
 
-    task_html_check = task_html.find("input")[0]
-    task_html_content = task_html.find("p")[0]
-    task_html_content._js.textContent = task["content"]
-    task_list.append(task_html)
+    article_html_check = article_html.find("input")[0]
+    article_html_content = article_html.find("p")[0]
+    article_html_content._js.textContent = article["content"]
+    article_list.append(article_html)
 
     def check_task(evt=None):
-        task["done"] = not task["done"]
-        task_html_content._js.classList.toggle("line-through", task["done"])
+        article["done"] = not article["done"]
+        article_html_content._js.classList.toggle("line-through", article["done"])
 
-    new_task_content.value = ""
-    task_html_check._js.onclick = check_task
+    new_article_content.value = ""
+    article_html_check._js.onclick = check_task
 
 
 def add_task_event(e):
@@ -56,4 +59,4 @@ def add_task_event(e):
         add_task(e)
 
 
-new_task_content.onkeypress = add_task_event
+new_article_content.onkeypress = add_task_event
