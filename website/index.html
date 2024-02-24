@@ -33,7 +33,7 @@
         </style>
     </head>
 
-    <body>
+    <body class="pyscript">
         <dialog id="loading">
             <h1>Loading...</h1>
         </dialog>
@@ -44,36 +44,110 @@
                 <a class="title" href=".">Daily Digest</a>
             </li>
             <li>
-                <button>Generate</button>
+                <button py-click="generate">Generate</button>
             </li>
             <li>
                 <a href="https://openai.com/chatgpt">Powered by ChatGPT</a>
             </li>
         </ul>
+        <ul class="header">
+            <li>
+                <select name="Topic" id="dropdown">
+                    <option value="politics">Politics</option>
+                    <option value="world">World</option>
+                    <option value="nation">Nation</option>
+                </select>
+            </li>
+            <li>
+                <input type="search" placeholder="Search Article..."/>
+            </li>
+        </ul>
 
-        <main class="pyscript">
-            <select name="Topic" id="dropdown">
-                <option value="politics">Politics</option>
-                <option value="world">World</option>
-                <option value="nation">Nation</option>
-            </select>
-            <div>
-                <input id="new-task-content" type="text" />
-                <button id="new-task-btn" type="submit" py-click="add_task">
-                    Add task
-                </button>
-            </div>
-
-            <div id="list-tasks-container"></div>
-
-            <template id="dropdown-template"><option value=""></option></template>
-
-            <template id="article-template">
-                <label class="flex items-center p-2">
-                    <input style="vertical-align: middle;" type="checkbox" />
-                    <p style="display: inline;"></p>
-                </label>
-            </template>
+        <main>
+            <article py-click="article_clicked">
+                <h3><a href="article.html">Article 1</a></h3>
+                <ul class="tags">
+                    <li>Running</li>
+                    <li>Creative Writing</li>
+                    <li>School</li>
+                </ul>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua. Interdum velit euismod in pellentesque.
+                    A iaculis at erat pellentesque adipiscing commodo. Sagittis eu volutpat odio 
+                    facilisis mauris sit amet massa vitae. Velit sed ullamcorper morbi tincidunt.
+                </p>
+            </article>
+            <article py-click="article_clicked">
+                <h3><a href="article.html">Article 2</a></h3>
+                <ul class="tags">
+                    <li>Running</li>
+                    <li>Creative Writing</li>
+                    <li>School</li>
+                </ul>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua. Interdum velit euismod in pellentesque.
+                    A iaculis at erat pellentesque adipiscing commodo. Sagittis eu volutpat odio 
+                    facilisis mauris sit amet massa vitae. Velit sed ullamcorper morbi tincidunt.
+                </p>
+            </article>
+            <article py-click="article_clicked">
+                <h3><a href="article.html">Article 3</a></h3>
+                <ul class="tags">
+                    <li>Running</li>
+                    <li>Creative Writing</li>
+                    <li>School</li>
+                </ul>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua. Interdum velit euismod in pellentesque.
+                    A iaculis at erat pellentesque adipiscing commodo. Sagittis eu volutpat odio 
+                    facilisis mauris sit amet massa vitae. Velit sed ullamcorper morbi tincidunt.
+                </p>
+            </article>
+            <article py-click="article_clicked">
+                <h3><a href="article.html">Article 4</a></h3>
+                <ul class="tags">
+                    <li>Running</li>
+                    <li>Creative Writing</li>
+                    <li>School</li>
+                </ul>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua. Interdum velit euismod in pellentesque.
+                    A iaculis at erat pellentesque adipiscing commodo. Sagittis eu volutpat odio 
+                    facilisis mauris sit amet massa vitae. Velit sed ullamcorper morbi tincidunt.
+                </p>
+            </article>
+            <article py-click="article_clicked">
+                <h3><a href="article.html">Article 5</a></h3>
+                <ul class="tags">
+                    <li>Running</li>
+                    <li>Creative Writing</li>
+                    <li>School</li>
+                </ul>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua. Interdum velit euismod in pellentesque.
+                    A iaculis at erat pellentesque adipiscing commodo. Sagittis eu volutpat odio 
+                    facilisis mauris sit amet massa vitae. Velit sed ullamcorper morbi tincidunt.
+                </p>
+            </article>
+            <article py-click="article_clicked">
+                <h3><a href="article.html">Article 6</a></h3>
+                <ul class="tags">
+                    <li>Running</li>
+                    <li>Creative Writing</li>
+                    <li>School</li>
+                </ul>
+                <p>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
+                    incididunt ut labore et dolore magna aliqua. Interdum velit euismod in pellentesque.
+                    A iaculis at erat pellentesque adipiscing commodo. Sagittis eu volutpat odio 
+                    facilisis mauris sit amet massa vitae. Velit sed ullamcorper morbi tincidunt.
+                </p>
+            </article>
         </main>
         <script type="py" src="./web_main.py" config="./pyscript.toml"></script>
     </body>
