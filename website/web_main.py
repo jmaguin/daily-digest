@@ -14,7 +14,15 @@ darkest_accent_color = "#346634"
 
 all_articles = []   # all articles for current topic
 selected_articles = []  # tracks all articles the user has selected
-dropdown_value = "politics" # value of the dropdown menu in index.html
+
+# populate the dropdown with topics
+dropdown_element = document.getElementById("dropdown" )  # find dropdown element
+for topic in config.master_tags:
+    new_option = document.createElement("option")   # create option element
+    new_option.value = topic
+    new_option.setAttribute("py-click", "dropdown_clicked")
+    new_option.innerText = topic.capitalize()
+    dropdown_element.append(new_option) # append to DOM
 
 # called when generate button clicked
 def generate(event):
@@ -22,8 +30,8 @@ def generate(event):
 
 # called when new dropdown item selected
 def dropdown_clicked(event):
-    config.dropdown_value = event.target.value
-    print(event.target.value)
+    config.selected_topic = event.target.value
+    print(config.selected_topic)
 
 # called when article clicked
 def article_clicked(event):

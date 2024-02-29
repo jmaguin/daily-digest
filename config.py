@@ -24,4 +24,6 @@ master_tags = ["politics",
                 "television"
                 ]
 
+selected_topic = "politics" # value of the dropdown menu in index.html
+
 max_selection = 3   # max num of articles that can be selected
