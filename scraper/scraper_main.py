@@ -10,28 +10,7 @@ from Database import Database
 
 print("Program running!\n")
 
-# master list of all tags
-master_tags = ["politics",
-                "world",
-                "sports",
-                "entertainment",
-                "business",
-                "science",
-                "health",
-                "climate",
-                "technology",
-                "religion",
-                "nation",
-                "arts",
-                "economy",
-                "education",
-                "race",
-                "culture",
-                "movies",
-                "food",
-                "gaming",
-                "television"
-                ]
+# master list of tags in config.py
 
 # Instantiate database
 db = Database()
