@@ -11,17 +11,8 @@
         <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
 
         <!-- CSS for index.html -->
+        <link rel="stylesheet" href="./assets/css/base.css"/>
         <link rel="stylesheet" href="./assets/css/index.css"/>
-
-        <!-- for splashscreen -->
-        <style>
-            #loading { outline: none; border: none; background: transparent; color: #c0c0c0}
-        </style>
-        <script type="module">
-            const loading = document.getElementById('loading');
-            addEventListener('py:ready', () => loading.close());
-            loading.showModal();
-        </script>
 
         <title>Daily Digest</title>
         <link rel="icon" type="image/png" href="./assets/favicon.png" />
@@ -34,17 +25,13 @@
     </head>
 
     <body class="pyscript">
-        <dialog id="loading">
-            <h1>Loading...</h1>
-        </dialog>
-
         <ul class="navbar">
             <li>
                 <img src="./assets/logo.png" class="logo" />
                 <a class="title" href=".">Daily Digest</a>
             </li>
             <li>
-                <button py-click="generate">Generate</button>
+                <a href="loading.html" class="button">Generate</a>
             </li>
             <li>
                 <a href="https://openai.com/chatgpt">Powered by ChatGPT</a>
@@ -53,9 +40,9 @@
         <ul class="header">
             <li>
                 <select name="Topic" id="dropdown">
-                    <option value="politics">Politics</option>
-                    <option value="world">World</option>
-                    <option value="nation">Nation</option>
+                    <option value="politics" py-click="dropdown_clicked">Politics</option>
+                    <option value="world" py-click="dropdown_clicked">World</option>
+                    <option value="nation" py-click="dropdown_clicked">Nation</option>
                 </select>
             </li>
             <li>
@@ -81,9 +68,9 @@
             <article py-click="article_clicked">
                 <h3><a href="article.html">Article 2</a></h3>
                 <ul class="tags">
-                    <li>Running</li>
-                    <li>Creative Writing</li>
+                    <li>Studying</li>
                     <li>School</li>
+                    <li>Tests</li>
                 </ul>
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
@@ -95,9 +82,9 @@
             <article py-click="article_clicked">
                 <h3><a href="article.html">Article 3</a></h3>
                 <ul class="tags">
-                    <li>Running</li>
-                    <li>Creative Writing</li>
-                    <li>School</li>
+                    <li>Party</li>
+                    <li>Gym</li>
+                    <li>Exercise</li>
                 </ul>
                 <p>
                     Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor 
