@@ -1,1 +1,5 @@
 name = "Daily Digest"
+
+[files]
+"../config.py" = "./config.py"
+"/database/Database.py" = "./Database.py"
