@@ -25,5 +25,6 @@ master_tags = ["politics",
                 ]
 
 selected_topic = "politics" # value of the dropdown menu in index.html
+selected_articles = []  # tracks all articles the user has selected. HTML objects
 
 max_selection = 3   # max num of articles that can be selected
