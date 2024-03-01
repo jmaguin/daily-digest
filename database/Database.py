@@ -10,11 +10,10 @@ class Database:
         print("Connecting to database...\n")
         # Open connection
         # If database does not exist, create it
-        self.con = sqlite3.connect("../database/scraper_data.db")
+        self.con = sqlite3.connect("scraper_data.db")
         self.cur = self.con.cursor()
 
         print("Database connected.\n")
-
 
         # Create table in database. Index off tag
         # Format    tag: Type String, category of article
@@ -38,12 +37,12 @@ class Database:
     # Get articles from database by tag
     # Returns empty list if no matches
     def get_articles(self, tag):
-        res = self.cur.execute("SELECT * FROM articles WHERE tag = ?", (tag,))
+        res = self.cur.execute("SELECT * FROM articles WHERE tag='%s'" % tag)
         return res.fetchall()
 
     # Prints articles with specified tag
     def print_articles(self, tag):
-        res = self.cur.execute("SELECT * FROM articles WHERE tag = ?", (tag,))
+        res = self.cur.execute("SELECT * FROM articles WHERE tag='%s'" % tag)
         print(*(res.fetchall()), sep="\n")
 
     # Destructor
