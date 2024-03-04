@@ -1,4 +1,4 @@
-from datetime import datetime as dt
+from datetime import datetime
 from pyscript import document
 from pyweb import pydom
 import config
@@ -54,13 +54,14 @@ def refresh_articles():
         # create <a> link
         new_link = document.createElement("a")      # create link
         new_link.href = article[4]                  # set link attribute
+        new_link.target = "_blank"                  # open in new tab
         new_link.innerText = article[1].title()     # set title
 
         # create <ul> for tags
         new_tags = document.createElement("ul")             # create tags list
         new_tags.classList.add("tags")                      # add 'tags' class
         new_tag = document.createElement("li")              # create tag
-        new_tag.innerText = config.selected_topic.title()   # set tag text to current topic
+        new_tag.innerText = article[3]   # set tag text to current topic
 
         new_text = document.createElement("p")          # create paragraph
         new_text.innerText = article[5][:250] + "..."   # add text blurb (250 char limit)
