@@ -1,6 +1,6 @@
 name = "Daily Digest"
 
-packages = ["sqlite3"]
+packages = ["sqlite3", "python-dateutil"]
 
 [files]
 "../config.py" = "./config.py"
