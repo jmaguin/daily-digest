@@ -77,8 +77,8 @@ body ul {
     color: var(--text-color)
 }
 
-.navbar button {
-    display: flex;
+.navbar .button {
+    display: inline-block;
     border: none;
     padding: 0.25rem 5rem;
     font-size: 1.5rem;
@@ -88,62 +88,23 @@ body ul {
     color: var(--text-color);
 }
 
-.navbar button:hover {
+.navbar .button:hover {
     background-color: var(--dark-accent-color);
 }
 
-.navbar button:active {
+.navbar .button:active {
     background-color: var(--darkest-accent-color);
-}
-
-/* Header */
-select {
-    border: none;
-    border-radius: 0;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
-    font-weight: 500;
-    background-color: var(--text-color);
-    color: var(--darkest-gray);
-}
-
-input {
-    color: var(--darkest-gray);
-    outline: none;
-    font-size: 1rem;
-    margin: 1rem;
-}
-
-/* Main */
-main {
-    display: flex;
-    justify-content: flex-start;
-    flex-wrap: wrap;
-    margin-left: 1rem;
-    margin-right: 1rem;
+    transition: 0.05s;
+    transform: scale(0.95);
 }
 
 /* Articles */
-article {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    flex-basis: 29%;
-    margin: 1rem;
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
-    border: solid;
-    border-radius: 5px;
-    border-width: 0.1rem;
-    border-color: var(--text-color);
-}
-
 article h3 {
     padding: 0;
     margin-top: 0.5rem;
     margin-bottom: 1rem;
-    font-size: 1.5rem;
-    font-weight: 500;
+    font-size: 1rem;
+    font-weight: 600;
 }
 
 article .tags {
@@ -161,20 +122,22 @@ article .tags li {
     background-color: var(--dark-gray);
 }
 
-article:hover {
-    transition: 0.1s;
-    transform: scale(1.01);
-    cursor: pointer;
-    background-color: var(--darkest-gray);
+article p {
+    padding: 0;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
 }
 
-article:active {
-    transition: 0.1s;
-    transform: scale(0.99);
+article .selected {
+    background-color: var(--darkest_gray)
+}
+
+h1 {
+    font-size: 2rem;
+    font-weight: 400;
 }
 
 a {
     text-decoration-line: none;
     color: var(--text-color);
 }
-

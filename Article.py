@@ -16,5 +16,10 @@ class Article:
     # Returns a formatted tuple for use in SQL querys
     def get_tuple(self):
         return (self.tag, self.title, self.source, self.date, self.url, self.content)
+    
+    # called when article is printed
+    def __str__(self):
+        return_string = "[%s]\n%s - %s\n\"%s\"\n%s\n%s" % (self.tag, self.source, self.date, self.title, self.content, self.url)
+        return return_string
 
 
