@@ -1,5 +1,8 @@
 #file Database.py
-import sqlite3;
+import sqlite3
+import sys
+sys.path.append("../daily_digest/Article")
+from Article import *
 
 # Class for the database that stores all web scraper data.
 class Database:
@@ -38,12 +41,18 @@ class Database:
     # Returns empty list if no matches
     def get_articles(self, tag):
         res = self.cur.execute("SELECT * FROM articles WHERE tag='%s'" % tag)
-        return res.fetchall()
+        tup_list = res.fetchall()   # list of article tuples
+        art_list = []   # list of article objects
+        for tup in tup_list:
+            this_article = Article(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+            art_list.append(this_article)
+        return art_list
 
     # Prints articles with specified tag
     def print_articles(self, tag):
-        res = self.cur.execute("SELECT * FROM articles WHERE tag='%s'" % tag)
-        print(*(res.fetchall()), sep="\n")
+        art_list = get_articles(tag)
+        for art in art_list:
+            print(art)
 
     # Destructor
     # Closes connection to database
