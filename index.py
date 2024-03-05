@@ -90,22 +90,22 @@ def refresh_articles():
 
     # loop through all articles
     i = 0
-    for article in reversed(articles_list):
+    for article in articles_list:
         new_article = create_article(article)   # create article
 
-        # Append if article belongs to specifed source
-        if str(source_dropdown.value) == article.source or source_dropdown.value == "All":
+        # pare down articles_list to just ones from specified source (source_dropdown)
+        if source_dropdown.value == "All" or source_dropdown.value == article.source:
             main_element.append(new_article)    # append article to <main>
 
-        # re-do all styling for articles that have been selected
-        for selected_article in config.selected_articles:
-            url = selected_article.querySelector("a").href
-            if(url == article.url):
-                new_article.style.backgroundColor = darkest_gray
+            # re-do all styling for articles that have been selected
+            for selected_article in config.selected_articles:
+                url = selected_article.querySelector("a").href
+                if(url == article.url):
+                    new_article.style.backgroundColor = darkest_gray
 
-        i = i + 1
-        if(i > 100):
-            break
+            i = i + 1
+            if(i > 100):
+                break
 
 refresh_articles()
 
