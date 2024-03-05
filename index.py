@@ -16,14 +16,27 @@ darkest_accent_color = "#346634"
 
 all_articles = []   # all articles for current topic
 
-# populate the dropdown with topics
-dropdown_element = document.getElementById("dropdown")  # find dropdown element
+# Populate dropdowns in the header -------------------------------------------------
+
+# populate the topics dropdown
+topic_dropdown = document.getElementById("topicDropdown")  # find dropdown element
 for topic in config.master_tags:
     new_option = document.createElement("option")   # create option element
     new_option.value = topic
-    new_option.setAttribute("py-click", "dropdown_clicked")
+    new_option.setAttribute("py-click", "topic_dropdown_clicked")
     new_option.innerText = topic.capitalize()
-    dropdown_element.append(new_option) # append to DOM
+    topic_dropdown.append(new_option) # append to DOM
+
+# populate the sources dropdown
+source_dropdown = document.getElementById("sourceDropdown")  # find dropdown element
+for art_source in config.master_sources:
+    new_option = document.createElement("option")   # create option element
+    new_option.value = art_source
+    new_option.setAttribute("py-click", "source_dropdown_clicked")
+    new_option.innerText = art_source
+    source_dropdown.append(new_option) # append to DOM
+
+# ---------------------------------------------------------------------------------
 
 # intitialize article counter
 article_count = document.querySelector(".articleCount")
@@ -32,54 +45,66 @@ article_count.innerText = "Articles Selected: 0/" + str(config.max_selection)
 # Instantiate database
 db = Database()
 
+# Creates an article HTML element
+# Input: Article object
+# Returns new article
+def create_article(article):
+    # create article
+    new_article = document.createElement("article")
+    new_article.setAttribute("py-click", "article_clicked")
+
+    # create <h3> header
+    new_header = document.createElement("h3")
+
+    # create <a> link
+    new_link = document.createElement("a")      # create link
+    new_link.href = article.url                 # set link attribute
+    new_link.target = "_blank"                  # open in new tab
+    new_link.innerText = article.title.title()  # set title
+
+    # create <ul> for tags
+    new_tags = document.createElement("ul")     # create tags list
+    new_tags.classList.add("tags")              # add 'tags' class
+    new_tag = document.createElement("li")      # create tag for date
+    new_tag.innerText = article.date
+    another_tag = document.createElement("li")  # create tag for source
+    another_tag.innerText = article.source
+
+    new_text = document.createElement("p")      # create paragraph
+    new_text.innerText = article.content[:250] + "..."   # add text blurb (250 char limit)
+
+    new_header.append(new_link)                 # place <a> into <h3>
+    new_article.append(new_header)              # place <h3> into <article>
+    new_tags.append(new_tag)                    # place <li> into <ul>
+    new_tags.append(another_tag)                # place <li> into <ul>
+    new_article.append(new_tags)                # place <ul> into <article>
+    new_article.append(new_text)                # place <p> into <article>
+
+    return new_article
+
 # refresh displayed articles based on topic
 def refresh_articles():
     articles_list = db.get_articles(config.selected_topic)
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
 
-    # append retrieved articles to main
+    # loop through all articles
     i = 0
-    for article in articles_list:
-        # create article
-        new_article = document.createElement("article")
-        new_article.setAttribute("py-click", "article_clicked")
+    for article in reversed(articles_list):
+        new_article = create_article(article)   # create article
 
-        # create <h3> header
-        new_header = document.createElement("h3")
+        # Append if article belongs to specifed source
+        if str(source_dropdown.value) == article.source or source_dropdown.value == "All":
+            main_element.append(new_article)    # append article to <main>
 
-        # create <a> link
-        new_link = document.createElement("a")      # create link
-        new_link.href = article.url                 # set link attribute
-        new_link.target = "_blank"                  # open in new tab
-        new_link.innerText = article.title.title()  # set title
-
-        # create <ul> for tags
-        new_tags = document.createElement("ul")     # create tags list
-        new_tags.classList.add("tags")              # add 'tags' class
-        new_tag = document.createElement("li")      # create tag for date
-        new_tag.innerText = process_date(article)
-        another_tag = document.createElement("li")  # create tag for source
-        another_tag.innerText = article.source
-
-        new_text = document.createElement("p")      # create paragraph
-        new_text.innerText = article.content[:250] + "..."   # add text blurb (250 char limit)
-
-        new_header.append(new_link)                 # place <a> into <h3>
-        new_article.append(new_header)              # place <h3> into <article>
-        new_tags.append(new_tag)                    # place <li> into <ul>
-        new_tags.append(another_tag)                # place <li> into <ul>
-        new_article.append(new_tags)                # place <ul> into <article>
-        new_article.append(new_text)                # place <p> into <article>
-        main_element.append(new_article)            # append new article to <main>
-
+        # re-do all styling for articles that have been selected
         for selected_article in config.selected_articles:
             url = selected_article.querySelector("a").href
             if(url == article.url):
                 new_article.style.backgroundColor = darkest_gray
 
         i = i + 1
-        if(i > 10):
+        if(i > 100):
             break
 
 refresh_articles()
@@ -89,8 +114,13 @@ def generate(event):
     print("generate!")
 
 # called when new dropdown item selected
-def dropdown_clicked(event):
+def topic_dropdown_clicked(event):
     config.selected_topic = event.target.value
+    refresh_articles()
+
+# called when new dropdown item selected
+def source_dropdown_clicked(event):
+    config.selected_source = event.target.value
     refresh_articles()
 
 # called when article clicked
