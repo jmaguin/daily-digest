@@ -24,3 +24,11 @@ class WebScraper(ABC):
     @abstractmethod
     def print_articles(self):
         pass
+
+    # Publication dates from different sources are in different formats
+    # This function converts all of them to MON DD, YYYY
+    # Input: Raw date String
+    # Output: Properly formatted date string
+    @abstractmethod
+    def reformat_date(self, raw_date):
+        pass

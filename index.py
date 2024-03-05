@@ -1,5 +1,3 @@
-import dateutil.parser
-import datetime
 from pyscript import document
 from pyweb import pydom
 import config
@@ -33,42 +31,6 @@ article_count.innerText = "Articles Selected: 0/" + str(config.max_selection)
 
 # Instantiate database
 db = Database()
-
-# Publication dates from different sources are in different formats
-# This function converts all of them to MON DD, YYYY
-# Input: Article object
-# Output: Properly formatted date string
-def process_date(article):
-    source = article.source
-    raw_date = article.date
-
-    # format: Published 9:23 AM EST, Mon February 12, 2024
-    if source == "CNN":
-        date_list = raw_date.split()    # split into words
-        raw_date = ""
-        i = 0
-        for word in reversed(date_list):    # only get last 3 words
-            raw_date = raw_date + " " + word
-            i = i + 1
-            if i > 2:
-                break
-        date = dateutil.parser.parse(raw_date)
-
-    # format: Unix epoch
-    elif source == "AP":
-        date_int = int(raw_date)/1000       # convert from str to int & from ms to sec
-        date = datetime.datetime.fromtimestamp(date_int)
-    
-    # formats: 2024-01-16T20:37:02-05:00 or Jan 13, 2024 5:30 PM EST
-    # PBS has 2 different date formats
-    elif source == "NPR" or source == "PBS Newshour":
-        raw_date = raw_date.replace("EST", "")      # remove EST -> causes time zone error?
-        split_loc = raw_date.find("T")      # find "T"
-        if split_loc != -1:
-            raw_date = raw_date[:split_loc]     # cut off string after "T" to just get date
-        date = dateutil.parser.parse(raw_date)
-
-    return str(date.strftime("%b %d, %Y"))
 
 # refresh displayed articles based on topic
 def refresh_articles():
