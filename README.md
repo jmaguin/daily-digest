@@ -2,14 +2,11 @@
 
 ## Installation Instructions:
 1. Download project
-2. Install GPT4All with ```pip install gpt4all```
-3. Download a GPT4All model from: https://gpt4all.io/index.html
-4. Place the ".gguf" model into the /daily-digest/models/ folder.
-5. Ensure the Enum in /language_model/model_enum.py is updated to reflect the downloaded model's file path.
+2. run ```pip install python-dateutil```
 
 ## Scraper Running instructions:
-1. Download project
-2. navigate to /daily-digest/scraper. run ```python scraper_main.py``` or ```python -W ignore scraper_main.py``` to ignore warnings  
+1. Install project
+2. navigate to /daily-digest. run ```python -m scraper.scraper_main.```
 Note: sqlite3 is included in Python. No install is necessary.
 
 ## Creating a New Scraper:
@@ -19,10 +16,11 @@ Note: sqlite3 is included in Python. No install is necessary.
 3. Implement the required methods
 - look at other files as examples
 
-## Summarizer Running Instructions:
-1. Download project
-2. navigate to /daily-digest/language_model. run ```python summarizer.py```
-Note: Ensure GPT4All is installed.
+## Website Running Instructions:
+1. Install project
+2. Download extension: Live Server by Ritwick Dey (https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+3. Open index.html in a tab
+4. Do Ctrl + Shift + P and click the option ```Live Server: Open With Live Server```
 
 ## Files:
 ### Scraper
