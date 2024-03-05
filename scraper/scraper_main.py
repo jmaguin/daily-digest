@@ -1,12 +1,12 @@
 #file: scaper_main.py
 import sys
 from bs4 import BeautifulSoup
-from Ap import Ap
-from Npr import Npr
-from Cnn import Cnn
-from PbsNewshour import PbsNewshour
-sys.path.insert(1, "../database")
-from Database import Database
+from scraper.Ap import Ap
+from scraper.Npr import Npr
+from scraper.Cnn import Cnn
+from scraper.PbsNewshour import PbsNewshour
+sys.path.append("../database")
+from database import Database
 
 print("Program running!\n")
 

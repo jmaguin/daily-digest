@@ -1,11 +1,14 @@
 #file: Cnn.py
+import dateutil
 import requests
 import time
+import sys
 import warnings
-from Article import Article
 from bs4 import BeautifulSoup
-from ProgressBar import ProgressBar
-from WebScraper import WebScraper
+from scraper.ProgressBar import ProgressBar
+from scraper.WebScraper import WebScraper
+sys.path.append("../daily_digest/Article")
+from Article import *
 
 
 # Class to gather data from CNN
@@ -81,10 +84,6 @@ class Cnn(WebScraper):
         end = time.time()
         print("\n\nSOURCE: CNN | ELAPSED TIME: %dsec | ARTICLES LOGGED: %d\n" % (end-start, self.art_count))
         print("/--------------- CNN scraper completed. ---------------/")
-        
-    @staticmethod
-    def formatDate(self, text):
-        return text
 
     # Retrieve all information about article from its URL
     # Returns Article object -> None if fails
@@ -127,7 +126,7 @@ class Cnn(WebScraper):
             warnings.warn("\nWARNING: Could not locate article content.\n\tArticle: %s\n\tError: %s" % (url, e))
             return None
 
-        return Article(tag, title, self.source_name, date, url, content)
+        return Article(tag, title, self.source_name, self.reformat_date(date), url, content)
 
     # Print out all found articles
     def print_articles(self):
@@ -138,4 +137,22 @@ class Cnn(WebScraper):
                 if (article.tag == tag):
                     print("(" + str(count) + ") " + article.title)
                     count+=1
+    
+    # Publication dates from different sources are in different formats
+    # This function converts all of them to MON DD, YYYY
+    # Input: Raw date String
+    # Output: Properly formatted date string
+    def reformat_date(self, raw_date):
+        # format: Published 9:23 AM EST, Mon February 12, 2024
+        date_list = raw_date.split()    # split into words
+        raw_date = ""
+        i = 0
+        for word in reversed(date_list):    # only get last 3 words
+            raw_date = raw_date + " " + word
+            i = i + 1
+            if i > 2:
+                break
+        date = dateutil.parser.parse(raw_date)
+
+        return str(date.strftime("%b %d, %Y"))
     

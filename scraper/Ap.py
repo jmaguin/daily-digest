@@ -1,12 +1,14 @@
 #file: Ap.py
+import datetime
 import requests
 import time
+import sys
 import warnings
-from Article import Article
 from bs4 import BeautifulSoup
-from ProgressBar import ProgressBar
-from WebScraper import WebScraper
-
+from scraper.ProgressBar import ProgressBar
+from scraper.WebScraper import WebScraper
+sys.path.append("../daily_digest/Article")
+from Article import *
 
 # Class to gather data from AP
 # Base URL: https://apnews.com/
@@ -103,7 +105,7 @@ class Ap(WebScraper):
             warnings.warn("\nWARNING: Could not locate article content.\n\tArticle: %s\n\tError: %s" % (url, e))
             return None
 
-        return Article(tag, title, self.source_name, date, url, content)
+        return Article(tag, title, self.source_name, self.reformat_date(date), url, content)
 
     # Print out all found articles
     def print_articles(self):
@@ -114,3 +116,13 @@ class Ap(WebScraper):
                 if (article.tag == tag):
                     print("(" + str(count) + ") " + article.title)
                     count+=1
+    
+    # Publication dates from different sources are in different formats
+    # This function converts all of them to MON DD, YYYY
+    # Input: Raw date String
+    # Output: Properly formatted date string
+    def reformat_date(self, raw_date):
+        date_int = int(raw_date)/1000       # convert from str to int & from ms to sec
+        date = datetime.datetime.fromtimestamp(date_int)
+
+        return str(date.strftime("%b %d, %Y"))
