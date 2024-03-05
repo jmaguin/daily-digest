@@ -1,8 +1,0 @@
-name = "Daily Digest"
-
-packages = ["sqlite3", "python-dateutil"]
-
-[files]
-"../config.py" = "./config.py"
-"../database/Database.py" = "./Database.py"
-"../database/scraper_data.db" = "./scraper_data.db"
