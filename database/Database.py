@@ -3,6 +3,8 @@ import sqlite3
 import sys
 sys.path.append("../daily_digest/Article")
 from Article import *
+import dateutil.parser
+import datetime
 
 # Class for the database that stores all web scraper data.
 class Database:
@@ -13,7 +15,7 @@ class Database:
         print("Connecting to database...\n")
         # Open connection
         # If database does not exist, create it
-        self.con = sqlite3.connect("scraper_data.db")
+        self.con = sqlite3.connect("./database/scraper_data.db")
         self.cur = self.con.cursor()
 
         print("Database connected.\n")
@@ -59,5 +61,3 @@ class Database:
     def __del__(self):
         self.con.close()
         print("Database connection closed.")
-
-
