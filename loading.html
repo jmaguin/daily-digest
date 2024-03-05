@@ -1,0 +1,42 @@
+<!doctype html>
+
+<html>
+    <head>
+        <!-- Recommended meta tags -->
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0">
+
+        <!-- This script tag bootstraps PyScript -->
+        <link rel="stylesheet" href="https://pyscript.net/releases/2024.1.1/core.css" />
+        <script type="module" src="https://pyscript.net/releases/2024.1.1/core.js"></script>
+
+        <!-- CSS for index.html -->
+        <link rel="stylesheet" href="./assets/css/base.css"/>
+        <link rel="stylesheet" href="./assets/css/loading.css"/>
+
+        <title>Daily Digest</title>
+        <link rel="icon" type="image/png" href="./assets/favicon.png" />
+
+        <style>
+            .line-through {
+                text-decoration: line-through;
+            }
+        </style>
+    </head>
+
+    <body class="pyscript">
+        <ul class="navbar">
+            <li>
+                <img src="./assets/logo.png" class="logo" />
+                <a class="title" href=".">Daily Digest</a>
+            </li>
+            <li>
+                <a href="https://openai.com/chatgpt">Powered by ChatGPT</a>
+            </li>
+        </ul>
+        <main>
+           <h1>Loading . . .</h1>
+        </main>
+        <script type="py" src="./loading.py" config="./pyscript.toml"></script>
+    </body>
+</html>
