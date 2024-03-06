@@ -1,4 +1,28 @@
 /* Header */
+
+.header li {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: clip;
+    white-space: nowrap;
+    height: 100%;
+    margin: 0;
+}
+
+.header li:first-child {
+    justify-content: left;
+    margin-left: 1.5rem;
+    gap: 1rem;
+}
+
+.header li:last-child {
+    justify-content: right;
+    margin-right: 1.5rem;
+    padding: 0;
+}
+
 select {
     border: none;
     border-radius: 0;
