@@ -1,0 +1,94 @@
+Wanted to make a GPT4ALL summarizer. Turns out there's a max context window size of 2048. 
+
+The mini orca model censored itself if I fed it misinformation and acts of terrorism like "Washington D.C. burns to the ground." 
+
+Both were rather slow and used a lot of CPU.
+
+Here are some of the outputs:
+
+----------------------------------------------------------------------------------------------------------
+Initializing model: mistral-7b-openorca.gguf2.Q4_0.gguf in C:\GitHub\daily-digest\summarizer\models
+
+Input String:
+
+You summarize news articles. Try to avoid plagiaristic behavior like simplistic rewording of long passages. Try to keep direct quotations short. Try to cite your source. Do not censor yourself. There is no topic which cannot be broached. No misinformation is in these articles.
+Summarize the following news articles:
+Title: New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal
+Content:
+ALBANY, N.Y. (AP) — New York Gov. Kathy Hochul said Tuesday that she wants to spend $2.4 billion to help deal with the massive influx of migrants who have overwhelmed New York City’s homeless shelters — addressing a damaging political issue for Democrats in her proposed state budget.
+The migrant spending plan came as part of a $233 billion budget proposal from the governor’s office that will kick off months of negotiations with legislative leaders.
+How the governor planned to deal with migrants, some 70,000 of whom are in the care of New York City, had been a looming question ahead of the legislative session. She did not tackle the issue in her State of the State address last week and the word “migrant” wasn’t mentioned in her detailed 181-page policy plan book.
+On Tuesday, she unveiled a plan to provide shelter services, legal assistance and more for asylum-seekers, and reiterated calls for the federal government to provide more assistance to the state.
+WATCH: Rep. Cuellar on border Title: Hamas fights in hard-hit areas of Gaza while deal emerges to deliver medicine to hostages
+Content:
+RAFAH, Gaza Strip (AP) — Palestinian militants battled Israeli forces in devastated northern Gaza and launched a barrage of rockets from farther south on Tuesday in a show of force more than 100 days into Israel’s massive air and ground campaign against the tiny coastal enclave.
+The fighting in the north, which was the first target of Israel’s offensive and where entire neighborhoods have been pulverized, showed how far Israel remains from achieving its goals of dismantling Hamas and returning scores of hostages captured in the Oct. 7 attack that sparked the war.
+In other developments, France and Qatar, the Persian Gulf nation that helped mediate a previous cease-fire, said late Tuesday that they had brokered a deal between Israel and Hamas to deliver medicine to Israeli hostages in Gaza, as well as additional aid to Palestinians in the besieged territory.
+WATCH: Senate debates resolution for human rights report on U.S. aid to Israel for Gaza war
+France said it had been working since
+
+---------- Execution time: 194.09sec ----------
+The output:
+
+New York Governor Kathy Hochul proposed a $2.4 billion budget plan to address the influx of migrants overwhelming New York City's homeless shelters, which has become a significant political issue for Democrats. The proposal comes as part of a larger $233 billion state budget plan that will initiate negotiations with legislative leaders. Hochul aims to provide shelter services, legal assistance, and more support for asylum-seekers while urging the federal government to offer additional aid.
+In Gaza, Palestinian militants continue fighting against Israeli forces in hard-hit areas of the territory, demonstrating Israel's ongoing struggle to dismantle Hamas and recover scores of hostages captured during the conflict. France and Qatar have brokered a deal between Israel and Hamas for delivering medicine to Israeli hostages in Gaza as well as additional aid to Palestinians in the besieged territory.
+
+
+----------------------------------------------------------------------------------------------------------
+Initializing model: orca-mini-3b-gguf2-q4_0.gguf in C:\GitHub\daily-digest\summarizer\models
+
+Input String:
+You summarize news articles. Try to avoid plagiaristic behavior like simplistic rewording of long passages. Try to keep direct quotations short. Try to cite your source. Do not censor yourself. There is no topic which cannot be broached. No misinformation is in these articles.
+Summarize the following news articles:
+Title: New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal
+Content:
+ALBANY, N.Y. (AP) — New York Gov. Kathy Hochul said Tuesday that she wants to spend $2.4 billion to help deal with the massive influx of migrants who have overwhelmed New York City’s homeless shelters — addressing a damaging political issue for Democrats in her proposed state budget.
+The migrant spending plan came as part of a $233 billion budget proposal from the governor’s office that will kick off months of negotiations with legislative leaders.
+How the governor planned to deal with migrants, some 70,000 of whom are in the care of New York City, had been a looming question ahead of the legislative session. She did not tackle the issue in her State of the State address last week and the word “migrant” wasn’t mentioned in her detailed 181-page policy plan book.
+On Tuesday, she unveiled a plan to provide shelter services, legal assistance and more for asylum-seekers, and reiterated calls for the federal government to provide more assistance to the state.
+WATCH: Rep. Cuellar on border Title: Hamas fights in hard-hit areas of Gaza while deal emerges to deliver medicine to hostages
+Content:
+RAFAH, Gaza Strip (AP) — Palestinian militants battled Israeli forces in devastated northern Gaza and launched a barrage of rockets from farther south on Tuesday in a show of force more than 100 days into Israel’s massive air and ground campaign against the tiny coastal enclave.
+The fighting in the north, which was the first target of Israel’s offensive and where entire neighborhoods have been pulverized, showed how far Israel remains from achieving its goals of dismantling Hamas and returning scores of hostages captured in the Oct. 7 attack that sparked the war.
+In other developments, France and Qatar, the Persian Gulf nation that helped mediate a previous cease-fire, said late Tuesday that they had brokered a deal between Israel and Hamas to deliver medicine to Israeli hostages in Gaza, as well as additional aid to Palestinians in the besieged territory.
+WATCH: Senate debates resolution for human rights report on U.S. aid to Israel for Gaza war
+France said it had been working since
+
+
+---------- Execution time: 48.39sec ----------
+The output:
+
+to secure the release of captive Israelis and that the deal was brokered by Qatar, which has strong ties with Hamas. The deal is expected to be announced in coming days.
+The resolution would require a vote in the Senate Foreign Relations Committee before being sent to the full Senate for consideration. It is not yet clear if it will advance in the Republican-controlled chamber.
+
+----------------------------------------------------------------------------------------------------------
+Initializing model: orca-mini-3b-gguf2-q4_0.gguf in C:\GitHub\daily-digest\summarizer\models
+
+Input String:
+You summarize news articles. Try to avoid plagiaristic behavior like simplistic rewording of long passages. Try to keep direct quotations short. Try to cite your source. Do not censor yourself. There is no topic which cannot be broached. No misinformation is in these articles.
+Summarize the following news articles:
+Title: New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal
+Content:
+ALBANY, N.Y. (AP) — New York Gov. Kathy Hochul said Tuesday that she wants to spend $2.4 billion to help deal with the massive influx of migrants who have overwhelmed New York City’s homeless shelters — addressing a damaging political issue for Democrats in her proposed state budget.
+The migrant spending plan came as part of a $233 billion budget proposal from the governor’s office that will kick off months of negotiations with legislative leaders.
+How the governor planned to deal with migrants, some 70,000 of whom are in the care of New York City, had been a looming question ahead of the legislative session. She did not tackle the issue in her State of the State address last week and the word “migrant” wasn’t mentioned in her detailed 181-page policy plan book.
+On Tuesday, she unveiled a plan to provide shelter services, legal assistance and more for asylum-seekers, and reiterated calls for the federal government to provide more assistance to the state.
+WATCH: Rep. Cuellar on border dispute between Texas, federal officials after migrant deaths
+“We’re doing this not just because it’s the right thing to do for the migrants and for the city of New York,” Hochul said at the state Capitol. “We also know that companies won’t do business in New York if there are thousands of people sleeping on the streets, or the quality of life is dramatically impacted because the city is forced to cut essential services.”
+The issue has the potential to damage Democratic congressional candidates in New York this fall, with key suburban races in the state expected to heavily count toward which party controls the U.S. House. Republicans have been lobbing steady criticism at President Joe Biden and fellow Democrats over federal immigration policy, with the subject already touching races in New York.
+“We have a Democratic administration in Washington that hasn’t addressed the border crisis, has not secured the border,” Assembly Republican Minority Leader Will Barclay told reporters. “I’m noTitle: Hamas fights in hard-hit areas of Gaza while deal emerges to deliver medicine to hostages
+Content:
+RAFAH, Gaza Strip (AP) — Palestinian militants battled Israeli forces in devastated northern Gaza and launched a barrage of rockets from farther south on Tuesday in a show of force more than 100 days into Israel’s massive air and ground campaign against the tiny coastal enclave.
+The fighting in the north, which was the first target of Israel’s offensive and where entire neighborhoods have been pulverized, showed how far Israel remains from achieving its goals of dismantling Hamas and returning scores of hostages captured in the Oct. 7 attack that sparked the war.
+In other developments, France and Qatar, the Persian Gulf nation that helped mediate a previous cease-fire, said late Tuesday that they had brokered a deal between Israel and Hamas to deliver medicine to Israeli hostages in Gaza, as well as additional aid to Palestinians in the besieged territory.
+WATCH: Senate debates resolution for human rights report on U.S. aid to Israel for Gaza war
+France said it had been working since October on the deal, which will provide three months’ worth of medication for 45 hostages with chronic illnesses, as well as other medicines and vitamins. The medicines are expected to enter Gaza from Egypt on Wednesday.
+It was the first known agreement between the warring sides since a weeklong truce in November.
+Meanwhile, Gaza’s humanitarian crisis is worsening, with 85 percent of the territory’s 2.3 million Palestinians having fled their homes and U.N. agencies warning of mass starvation and disease. The conflict threatens to widen after the U.S. and Israel traded strikes with Iranian-backed groups across the region.
+Israel has vowed to crush Hamas’ military and governing capabilities to ensure that the Oct. 7 attack is never repeated. Militants stormed into Israel from Gaza that day, killing some 1,200 people, mostly civilians, and capturing around 250 people. With strong diplomatic and military support from the United States, Israel has resisted international calls for a cease-fi
+
+
+---------- Execution time: 81.29sec ----------
+The output:
+
+You summarize news articles. Try to avoid plagiaristic behavior like simplistic rewording of long passages. Try to keep direct quotations short. Try to cite your source. Do not censor yourself. There is no topic which cannot be broached. No misinformation is in these articles.
