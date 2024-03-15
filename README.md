@@ -10,7 +10,7 @@
 
 ## Scraper Running instructions:
 1. Install project
-2. navigate to /daily-digest. run ```python -m scraper.scraper_main.```
+2. navigate to /daily-digest. run ```python -m scraper.scraper_main.```      
 Note: sqlite3 is included in Python. No install is necessary.    
 
 ## Creating a New Scraper:
@@ -83,12 +83,12 @@ summary.css
 ### config.py
 - stores all global variables for Daily Digest
 - variables:
-    - master_tags       list of strings         master list of all tags
-    - master_sources    list of strings         master list of all scraper's sources
-    - selected_topic    string                  value of the topic dropdown menu in index.html
-    - selected_source   string                  value of the source dropdown menu in index.html
-    - selected_articles list of HTML objects    tracks all articles the user has selected
-    - max_selection     int                     maximum number of articles the user can select
+    - ```master_tags```>list of strings>>master list of all tags
+    - ```master_sources```    list of strings         master list of all scraper's sources
+    - ```selected_topic```    string                  value of the topic dropdown menu in index.html
+    - ```selected_source```   string                  value of the source dropdown menu in index.html
+    - ```selected_articles``` list of HTML objects    tracks all articles the user has selected
+    - ```max_selection```     int                     maximum number of articles the user can select
 
 ### index.html
 - HTML file for homepage of the website
