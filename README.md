@@ -11,7 +11,7 @@
 ## Scraper Running instructions:
 1. Install project
 2. navigate to /daily-digest. run ```python -m scraper.scraper_main.```
-Note: sqlite3 is included in Python. No install is necessary.
+Note: sqlite3 is included in Python. No install is necessary.    
 
 ## Creating a New Scraper:
 1. Create a new file and within it the scraper class
@@ -19,46 +19,92 @@ Note: sqlite3 is included in Python. No install is necessary.
 4. Study the HTML structure of the desired webpage
 3. Implement the required methods
 - look at other files as examples
+5. Instantiate the scraper in /scraper/scraper_main.py
+- create new instance e.g. ```cnn = Cnn()```
+- loop through each found article and add it to the database
+- ensure each tag in list of master_tags in config.py
 
 ## Website Running Instructions:
 1. Install project
 2. Download extension: Live Server by Ritwick Dey (https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
-3. Open index.html in a tab
+3. Open index.html in a VS Code tab
 4. Do Ctrl + Shift + P and click the option ```Live Server: Open With Live Server```
 
 ## Files:
+### Daily Digest
+Article.py    
+config.py    
+index.html    
+index.py    
+loading.html     
+loading.py    
+summary.html    
+summary.py     
+pyscript.toml     
+
 ### Scraper
-Article.py  
+Ap.py     
+Cnn.py    
+Npr.py  
+PbsNewshour.py    
 ProgressBar.py  
-WebScraper.py   
 scraper_main.py     
-Ap.py    
-Npr.py     
-PbsNewshour.py
+WebScraper.py   
 
 ### Database
 Database.py  
 scraper_data.db
 
-### Language_Model
-model_enum.py    
-summarizer.py    
-summarizer_main.py    
+### Assets
+base.css     
+index.css     
+loading.css      
+summary.css    
 
-### Models
-Place your .gguf models here
+## Daily Digest
 
 ### Article.py
 - class to define each Article collected by the scrapers
+- Ex: accessing a field - ```article.source``` or ```article.url```
+- the database stores all articles in tuple format
+- use "get_tuple()" before inserting article into database
 - methods:
     ```
     def __init__(self, source, title, tag, date, url, content):
         # Constructor
-        # All variables are Strings
+        # order of parameters important
+        # All variables are strings
     
     def get_tuple(self):
         # Returns a formatted tuple for use in SQL querys
+        # Tuple contents are in same order as constructor parameters
     ```
+
+### config.py
+- stores all global variables for Daily Digest
+- variables:
+    - master_tags       list of strings         master list of all tags
+    - master_sources    list of strings         master list of all scraper's sources
+    - selected_topic    string                  value of the topic dropdown menu in index.html
+    - selected_source   string                  value of the source dropdown menu in index.html
+    - selected_articles list of HTML objects    tracks all articles the user has selected
+    - max_selection     int                     maximum number of articles the user can select
+
+### index.html
+- HTML file for homepage of the website
+- <body> split into 3 sections: .navbar, .header, <main>
+- .navbar
+    - unordered list
+    - contains logo, Daily Digest title, and "Generate" button
+    - Generate button is link to loading.html page
+- .header
+    - unordered list, below navbar
+    - contains topic and source dropdowns, "Articles Selected" counter, and search bar
+- <main>
+    - location where articles are appended after they are retrieved from the database
+
+
+
 
 ### ProgressBar.py
 - prints progress as scraper is working
