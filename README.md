@@ -104,44 +104,44 @@ summary.css
     - location where articles are appended after they are retrieved from the database
 
 ### index.py
-    - runs automatically when ```index.html``` is loaded
-    - It does the following upon loading the page:
-        1. Populates the Topics Dropdown with topics from ```master_tags``` (from config.py)
-        2. Populates the Source Dropdown with sources from ```master_sources``` (from config.py)
-        3. Creates the Article Counter. Looks like: "Articles Selected: 0/[config.max_selection]"
-        4. Creates a connection to the database
-        5. Creates an Article object for each article in the database belonging to the current selected topic and source (from dropdowns)
-        6. Appends those articles to the ```<main>``` tag in ```index.html```
-    - methods:
-        ```
-        def create_article(article):
-            # Input: Article object
-            # Creates an article HTML element and returns it
-            # Text blurb limit is 250 characters
+- runs automatically when ```index.html``` is loaded
+- It does the following upon loading the page:
+    1. Populates the Topics Dropdown with topics from ```master_tags``` (from config.py)
+    2. Populates the Source Dropdown with sources from ```master_sources``` (from config.py)
+    3. Creates the Article Counter. Looks like: "Articles Selected: 0/[config.max_selection]"
+    4. Creates a connection to the database
+    5. Creates an Article object for each article in the database belonging to the current selected topic and source (from dropdowns)
+    6. Appends those articles to the ```<main>``` tag in ```index.html```
+- methods:
+    ```
+    def create_article(article):
+        # Input: Article object
+        # Creates an article HTML element and returns it
+        # Text blurb limit is 250 characters
 
-        def refresh_articles():
-            # Called on page load and when Topic or Source Dropdowns change
-            # Re-queries the database for articles belonging to the currently selected parameters
-            # Appends all retrieved articles to the <main> tag in index.html
-            # Checks styling - if an article has been selected, it should be dark gray
-                # If styling is not there, apply it
-        
-        def generate(event):
-            # Called when the "Generate" button is clicked
-        
-        def topic_dropdown_clicked(event):
-            # Called when a new item in the Topic Dropdown is clicked
-            # Updates the value of config.selected_source
-            # Calls refresh_articles()
+    def refresh_articles():
+        # Called on page load and when Topic or Source Dropdowns change
+        # Re-queries the database for articles belonging to the currently selected parameters
+        # Appends all retrieved articles to the <main> tag in index.html
+        # Checks styling - if an article has been selected, it should be dark gray
+            # If styling is not there, apply it
+    
+    def generate(event):
+        # Called when the "Generate" button is clicked
+    
+    def topic_dropdown_clicked(event):
+        # Called when a new item in the Topic Dropdown is clicked
+        # Updates the value of config.selected_source
+        # Calls refresh_articles()
 
-        def article_clicked(event):
-            # Called when an article is clicked
-            # Iterates thru config.selected_articles
-                # Checks if currently selected articles is already in list
-                # If so, remove it from selected_articles and update the Article Counter
-            # If the number of selected articles is less than max_selection, append the article to selected_articles
-            # Update Article Counter
-        ```
+    def article_clicked(event):
+        # Called when an article is clicked
+        # Iterates thru config.selected_articles
+            # Checks if currently selected articles is already in list
+            # If so, remove it from selected_articles and update the Article Counter
+        # If the number of selected articles is less than max_selection, append the article to selected_articles
+        # Update Article Counter
+    ```
 
 ### loading.html
 - Work in Progress
@@ -197,10 +197,10 @@ summary.css
 - File to run the scrapers
 - If created a new scraper: instantiate here
 - It does the following:
-    1. Creates connection to the database
-    2. Creates new instances of all scrapers
-    3. If a source's tag is not the same as in ```config.master_tags```, converts it
-    4. Loops thru all found articles and adds them to the database using ```insert_article(article)```
+1. Creates connection to the database
+2. Creates new instances of all scrapers
+3. If a source's tag is not the same as in ```config.master_tags```, converts it
+4. Loops thru all found articles and adds them to the database using ```insert_article(article)```
 
 ### WebScraper.py
 - abstract class to construct all web scrapers from
