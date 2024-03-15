@@ -106,12 +106,12 @@ summary.css
 ### index.py
 - runs automatically when ```index.html``` is loaded
 - It does the following upon loading the page:
-    1. Populates the Topics Dropdown with topics from ```master_tags``` (from config.py)
-    2. Populates the Source Dropdown with sources from ```master_sources``` (from config.py)
-    3. Creates the Article Counter. Looks like: "Articles Selected: 0/[config.max_selection]"
-    4. Creates a connection to the database
-    5. Creates an Article object for each article in the database belonging to the current selected topic and source (from dropdowns)
-    6. Appends those articles to the ```<main>``` tag in ```index.html```
+1. Populates the Topics Dropdown with topics from ```master_tags``` (from config.py)
+2. Populates the Source Dropdown with sources from ```master_sources``` (from config.py)
+3. Creates the Article Counter. Looks like: "Articles Selected: 0/[config.max_selection]"
+4. Creates a connection to the database
+5. Creates an Article object for each article in the database belonging to the current selected topic and source (from dropdowns)
+6. Appends those articles to the ```<main>``` tag in ```index.html```
 - methods:
     ```
     def create_article(article):
