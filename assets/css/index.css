@@ -53,7 +53,7 @@ main {
 article h3 a:hover{
     transition:0.1s;
     text-decoration: underline;
-    color: #0000FF    
+    color: #87CEFA    
 }
 
 /* Articles */
