@@ -4,6 +4,7 @@ import requests
 import time
 import sys
 import warnings
+import string
 from bs4 import BeautifulSoup
 from scraper.ProgressBar import ProgressBar
 from scraper.WebScraper import WebScraper
@@ -84,7 +85,7 @@ class Npr(WebScraper):
 
         # get title
         try:
-            title = soup.find("h1").get_text()
+            title = string.capwords(soup.find("h1").get_text())
         except Exception as e:
             warnings.warn("\nWARNING: Could not locate article title.\n\tArticle: %s\n\tError: %s" % (url, e))
             return None

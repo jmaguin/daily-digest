@@ -60,7 +60,7 @@ def create_article(article):
     new_link = document.createElement("a")      # create link
     new_link.href = article.url                 # set link attribute
     new_link.target = "_blank"                  # open in new tab
-    new_link.innerText = article.title.title()  # set title
+    new_link.innerText = article.title          # set title
 
     # create <ul> for tags
     new_tags = document.createElement("ul")     # create tags list

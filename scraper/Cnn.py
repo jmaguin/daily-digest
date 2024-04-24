@@ -4,6 +4,7 @@ import requests
 import time
 import sys
 import warnings
+import string
 from bs4 import BeautifulSoup
 from scraper.ProgressBar import ProgressBar
 from scraper.WebScraper import WebScraper
@@ -98,7 +99,7 @@ class Cnn(WebScraper):
         # get title
         # TODO: get article title for CNN Underscored pages soup.find(h1) is a NoneType without attribute "get_text"
         try:
-            title = soup.h1.get_text()
+            title = string.capwords(soup.h1.get_text())
         except Exception as e:
             warnings.warn("\nWARNING: Could not locate article title.\n\tArticle: %s\n\tError: %s" % (url, e))
             warnings.warn("\n\tsoup.find('h1'): %s" % (soup.find("h1")))
