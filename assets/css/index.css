@@ -49,6 +49,14 @@ main {
     margin-right: 1rem;
 }
 
+/* Link */
+article h3 a:hover{
+    transition:0.1s;
+    text-decoration: underline;
+    font-weight: bold;
+    
+}
+
 /* Articles */
 article {
     display: flex;
