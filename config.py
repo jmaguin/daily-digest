@@ -29,6 +29,6 @@ master_sources = ["All", "PBS Newshour", "CNN", "NPR", "AP"]
 
 selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
-selected_articles = []  # tracks all articles the user has selected. HTML objects
+selected_articles = []  # tracks all articles the user has selected. Article objects
 
 max_selection = 3   # max num of articles that can be selected

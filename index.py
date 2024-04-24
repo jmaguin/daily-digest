@@ -14,7 +14,11 @@ accent_color = "#58a858"
 dark_accent_color = "#438143"
 darkest_accent_color = "#346634"
 
+# Instantiate database
+db = Database()
+
 all_articles = []   # all articles for current topic
+articles_list = db.get_articles(config.selected_topic)
 
 # Populate dropdowns in the header -------------------------------------------------
 
@@ -41,9 +45,6 @@ for art_source in config.master_sources:
 # intitialize article counter
 article_count = document.querySelector(".articleCount")
 article_count.innerText = "Articles Selected: 0/" + str(config.max_selection)
-
-# Instantiate database
-db = Database()
 
 # Creates an article HTML element
 # Input: Article object
@@ -84,7 +85,6 @@ def create_article(article):
 
 # refresh displayed articles based on topic
 def refresh_articles():
-    articles_list = db.get_articles(config.selected_topic)
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
 
@@ -125,26 +125,30 @@ def source_dropdown_clicked(event):
 
 # called when article clicked
 def article_clicked(event):
-    this_article = event.currentTarget
-    
+    art_html_object = event.currentTarget     # HTML object of selected article
+    selected_article_url = art_html_object.querySelector("a").href
+
+    # Get Article object representation of selected article
+    for article_object in articles_list:
+        if selected_article_url == article_object.url:
+            this_article = article_object
+            break
+
     # iterate thru selected_articles
     # check to see if already clicked
-    this_url = this_article.querySelector("a").href
     for that_article in config.selected_articles:
-        that_url = that_article.querySelector("a").href
-
         # article has already been clicked
-        if this_url == that_url:
+        if this_article.url == that_article.url:
             config.selected_articles.remove(that_article)
-            this_article.style.backgroundColor = gray
+            art_html_object.style.backgroundColor = gray
             # update article counter
             article_count.innerHTML = "Articles Selected: " + str(len(config.selected_articles)) + "/" + str(config.max_selection)
             return
 
-    # if num of selected articles lower than max allowed
+    # if num of selected articles lower than max allowed, select it
     if len(config.selected_articles) < config.max_selection:
         config.selected_articles.append(this_article)
-        this_article.style.backgroundColor = darkest_gray
+        art_html_object.style.backgroundColor = darkest_gray
     
     # update article counter
     article_count.innerHTML = "Articles Selected: " + str(len(config.selected_articles)) + "/" + str(config.max_selection)

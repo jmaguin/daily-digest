@@ -40,6 +40,7 @@ class Database:
             self.con.commit()
 
     # Get articles from database by tag
+    # Returns list of Article objects
     # Returns empty list if no matches
     def get_articles(self, tag):
         res = self.cur.execute("SELECT * FROM articles WHERE tag='%s'" % tag)
