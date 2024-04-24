@@ -10,3 +10,6 @@ text_color = "#c0c0c0"
 accent_color = "#58a858"
 dark_accent_color = "#438143"
 darkest_accent_color = "#346634"
+
+for article in config.selected_articles:
+    print(article.title)

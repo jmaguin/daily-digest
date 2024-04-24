@@ -87,6 +87,7 @@ def create_article(article):
 def refresh_articles():
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
+    articles_list = db.get_articles(config.selected_topic)
 
     # loop through all articles
     i = 0
@@ -99,8 +100,7 @@ def refresh_articles():
 
             # re-do all styling for articles that have been selected
             for selected_article in config.selected_articles:
-                url = selected_article.querySelector("a").href
-                if(url == article.url):
+                if(selected_article.url == article.url):
                     new_article.style.backgroundColor = darkest_gray
 
             i = i + 1
