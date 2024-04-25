@@ -1,7 +1,9 @@
+from js import localStorage
 from pyscript import document
 from pyweb import pydom
 import config
 from Database import *
+from Article import *
 import sqlite3
 
 
@@ -14,11 +16,12 @@ accent_color = "#58a858"
 dark_accent_color = "#438143"
 darkest_accent_color = "#346634"
 
+selected_topic = "politics" # value of the topic dropdown menu in index.html
+selected_source = "All" # value of the source dropdown menu in index.html
+selected_urls = []  # tracks all articles the user has selected. URLs (strings)
+
 # Instantiate database
 db = Database()
-
-all_articles = []   # all articles for current topic
-articles_list = db.get_articles(config.selected_topic)
 
 # Populate dropdowns in the header -------------------------------------------------
 
@@ -85,10 +88,10 @@ def create_article(article):
 
 # refresh displayed articles based on topic
 def refresh_articles():
+    articles_list = db.get_articles(selected_topic)
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
-    articles_list = db.get_articles(config.selected_topic)
-
+    
     # loop through all articles
     i = 0
     for article in articles_list:
@@ -99,8 +102,8 @@ def refresh_articles():
             main_element.append(new_article)    # append article to <main>
 
             # re-do all styling for articles that have been selected
-            for selected_article in config.selected_articles:
-                if(selected_article.url == article.url):
+            for url in selected_urls:
+                if(url == article.url):
                     new_article.style.backgroundColor = darkest_gray
 
             i = i + 1
@@ -110,47 +113,48 @@ def refresh_articles():
 refresh_articles()
 
 # called when generate button clicked
+# enter selected article's URLs into local storage
 def generate(event):
-    print("generate!")
+    print(str(len(selected_urls)))
+    localStorage.setItem(config.localStorage_lenth_key, str(len(selected_urls)))    # holds number of selected articles
+    for i, url in enumerate(selected_urls):
+        key = "url" + str(i)
+        localStorage.setItem(key, url)
 
 # called when new dropdown item selected
 def topic_dropdown_clicked(event):
-    config.selected_topic = event.target.value
+    global selected_topic
+    selected_topic = event.target.value
     refresh_articles()
 
 # called when new dropdown item selected
 def source_dropdown_clicked(event):
-    config.selected_source = event.target.value
+    global selected_source
+    selected_source = event.target.value
     refresh_articles()
 
 # called when article clicked
 def article_clicked(event):
-    art_html_object = event.currentTarget     # HTML object of selected article
-    selected_article_url = art_html_object.querySelector("a").href
-
-    # Get Article object representation of selected article
-    for article_object in articles_list:
-        if selected_article_url == article_object.url:
-            this_article = article_object
-            break
+    selected_article_html = event.currentTarget     # HTML object of selected article
+    selected_article_url = selected_article_html.querySelector("a").href
 
     # iterate thru selected_articles
     # check to see if already clicked
-    for that_article in config.selected_articles:
+    for url in selected_urls:
         # article has already been clicked
-        if this_article.url == that_article.url:
-            config.selected_articles.remove(that_article)
-            art_html_object.style.backgroundColor = gray
+        if selected_article_url == url:
+            selected_urls.remove(selected_article_url)
+            selected_article_html.style.backgroundColor = gray
             # update article counter
-            article_count.innerHTML = "Articles Selected: " + str(len(config.selected_articles)) + "/" + str(config.max_selection)
+            article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
             return
 
     # if num of selected articles lower than max allowed, select it
-    if len(config.selected_articles) < config.max_selection:
-        config.selected_articles.append(this_article)
-        art_html_object.style.backgroundColor = darkest_gray
-    
+    if len(selected_urls) < config.max_selection:
+        selected_urls.append(selected_article_url)
+        selected_article_html.style.backgroundColor = darkest_gray
+
     # update article counter
-    article_count.innerHTML = "Articles Selected: " + str(len(config.selected_articles)) + "/" + str(config.max_selection)
+    article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
     
 

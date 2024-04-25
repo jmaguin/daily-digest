@@ -50,6 +50,18 @@ class Database:
             this_article = Article(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
             art_list.append(this_article)
         return art_list
+    
+    # Get single article from database by URL
+    # Returns Article object
+    # Returns None if no matches
+    def get_article(self, url):
+        res = self.cur.execute("SELECT * FROM articles WHERE url='%s'" % url)
+        tup = res.fetchone()   # tuple of strings
+        if tup is None:
+            return None
+        
+        return Article(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+           
 
     # Prints articles with specified tag
     def print_articles(self, tag):
