@@ -20,9 +20,17 @@ db = Database()
 
 # get all selected articles using URLs from localStorage
 num_of_urls = localStorage.getItem(config.localStorage_lenth_key)
-for i in range(int(num_of_urls)):
-    url = localStorage.getItem("url" + str(i))
-    selected_articles.append(db.get_article(url))
+
+# if num_of_urls is not in local storage do not try to get the urls
+
+# this check is needed to prevent an error message from showing up
+if(num_of_urls is None):
+    print("localStorage_length_key not found")
+else:
+    for i in range(int(num_of_urls)):
+        url = localStorage.getItem("url" + str(i))
+        print(url)
+        selected_articles.append(db.get_article(url))
 
 localStorage.clear()    # clear the localStorage
 
