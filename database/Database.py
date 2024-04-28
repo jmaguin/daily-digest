@@ -12,13 +12,13 @@ class Database:
     # Constructor
     # Initializes the database
     def __init__(self):
-        print("Connecting to database...\n")
+        print("Connecting to database...")
         # Open connection
         # If database does not exist, create it
         self.con = sqlite3.connect("scraper_data.db")
         self.cur = self.con.cursor()
 
-        print("Database connected.\n")
+        print("Database connected.")
 
         # Create table in database. Index off tag
         # Format    tag: Type String, category of article

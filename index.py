@@ -19,6 +19,7 @@ darkest_accent_color = "#346634"
 selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
+search_term = ""    # value of search bar
 
 # Instantiate database
 db = Database()
@@ -91,6 +92,7 @@ def refresh_articles():
     articles_list = db.get_articles(selected_topic)
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
+    global search_term
     
     # loop through all articles
     i = 0
@@ -99,18 +101,27 @@ def refresh_articles():
 
         # pare down articles_list to just ones from specified source (source_dropdown)
         if source_dropdown.value == "All" or source_dropdown.value == article.source:
-            main_element.append(new_article)    # append article to <main>
 
-            # re-do all styling for articles that have been selected
-            for url in selected_urls:
-                if(url == article.url):
-                    new_article.style.backgroundColor = darkest_gray
+            # restrict articles based on search term (unless it's empty)
+            if search_term.lower() in article.title.lower() or search_term == "":
+                main_element.append(new_article)    # append article to <main>
 
-            i = i + 1
-            if(i > 100):
-                break
+                # re-do all styling for articles that have been selected
+                for url in selected_urls:
+                    if(url == article.url):
+                        new_article.style.backgroundColor = darkest_gray
+
+                i = i + 1
+                if(i > 50):
+                    break
+    
+    search_bar = document.querySelector("input")    # select search bar
+    search_bar.value = ""           # clear search bar
+    search_term = ""                # clear search_term
 
 refresh_articles()
+
+# Event Listeners ------------------------------------------
 
 # called when generate button clicked
 # enter selected article's URLs into local storage
@@ -131,6 +142,14 @@ def source_dropdown_clicked(event):
     global selected_source
     selected_source = event.target.value
     refresh_articles()
+
+# called when keydown event triggered in search bar
+def search_bar_entered(event):
+    global search_term
+    if event.key == "Enter":
+        search_term = event.target.value    # update search term
+        print(search_term)
+        refresh_articles()                  # update displayed articles
 
 # called when article clicked
 def article_clicked(event):
