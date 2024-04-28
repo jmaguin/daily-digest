@@ -90,6 +90,7 @@ def create_article(article):
 # refresh displayed articles based on topic
 def refresh_articles():
     articles_list = db.get_articles(selected_topic)
+    print(len(articles_list))
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
     global search_term
