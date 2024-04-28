@@ -115,7 +115,6 @@ refresh_articles()
 # called when generate button clicked
 # enter selected article's URLs into local storage
 def generate(event):
-    print(str(len(selected_urls)))
     localStorage.setItem(config.localStorage_lenth_key, str(len(selected_urls)))    # holds number of selected articles
     for i, url in enumerate(selected_urls):
         key = "url" + str(i)

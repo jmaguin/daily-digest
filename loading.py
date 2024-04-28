@@ -13,7 +13,7 @@ accent_color = "#58a858"
 dark_accent_color = "#438143"
 darkest_accent_color = "#346634"
 
-selected_articles = []  # list of articles selected on index.html
+selected_articles = []  # list of articles selected on index.html (Article objects)
 
 # Instantiate database
 db = Database()
@@ -25,6 +25,7 @@ num_of_urls = localStorage.getItem(config.localStorage_lenth_key)
 # this check is needed to prevent an error message from showing up
 if(num_of_urls is None):
     print("localStorage_length_key not found")
+    # TODO: automatic redirect to previous page (index.py)?
 else:
     for i in range(int(num_of_urls)):
         url = localStorage.getItem("url" + str(i))
