@@ -22,7 +22,6 @@ db = Database()
 num_of_urls = localStorage.getItem(config.localStorage_lenth_key)
 
 # if num_of_urls is not in local storage do not try to get the urls
-
 # this check is needed to prevent an error message from showing up
 if(num_of_urls is None):
     print("localStorage_length_key not found")
