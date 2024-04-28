@@ -137,6 +137,10 @@ h1 {
     font-weight: 400;
 }
 
+h2 {
+    font-weight: 400;
+}
+
 a {
     text-decoration-line: none;
     color: var(--text-color);
