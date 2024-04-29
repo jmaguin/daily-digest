@@ -90,7 +90,6 @@ article:active {
     transform: scale(0.99);
 }
 
-
 .actions-bar {
     display: flex;
     flex-direction: row;
@@ -115,6 +114,7 @@ article:active {
     all: unset;
 
 }
+
 .action-button {
     all: unset;
     display: flex;

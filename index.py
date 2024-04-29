@@ -55,7 +55,9 @@ article_count.innerText = "Articles Selected: 0/" + str(config.max_selection)
 # Helper functions -----------------------------------------------------------------
 
 # Set multiple attributes easily
-def setAttributes(elem, attrs):         # elem = DOM element, attrs = dictionary
+# Input: elem = DOM element, attrs = dictionary
+# Output: none
+def setAttributes(elem, attrs):         
     for key, value in attrs.items():
         elem.setAttribute(key, value)
 
@@ -170,8 +172,6 @@ def create_article(article):
     # create action bar
     new_action_bar = create_Action_Bar()
     
-
-
     new_header.append(new_link)                 # place <a> into <h3>
     new_main.append(new_header)                 # place <h3> into main content <div>
     new_tags.append(new_tag)                    # place <li> into <ul>
