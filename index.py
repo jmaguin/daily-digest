@@ -19,6 +19,8 @@ darkest_accent_color = "#346634"
 selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
+search_term = ""    # value of search bar
+max_num_displayed_articles = config.display_article_increment    # total number of articles to display
 
 # Instantiate database
 db = Database()
@@ -64,7 +66,7 @@ def create_article(article):
     new_link = document.createElement("a")      # create link
     new_link.href = article.url                 # set link attribute
     new_link.target = "_blank"                  # open in new tab
-    new_link.innerText = article.title          # set title
+    new_link.innerText = article.title.strip()  # set title
 
     # create <ul> for tags
     new_tags = document.createElement("ul")     # create tags list
@@ -75,7 +77,7 @@ def create_article(article):
     another_tag.innerText = article.source
 
     new_text = document.createElement("p")      # create paragraph
-    new_text.innerText = article.content[:250] + "..."   # add text blurb (250 char limit)
+    new_text.innerText = article.content[:250].strip() + "..."   # add text blurb (250 char limit)
 
     new_header.append(new_link)                 # place <a> into <h3>
     new_article.append(new_header)              # place <h3> into <article>
@@ -87,10 +89,12 @@ def create_article(article):
     return new_article
 
 # refresh displayed articles based on topic
-def refresh_articles():
+# keep_search_term: if True, maintain article sorting by the search term
+def refresh_articles(keep_search_term):
     articles_list = db.get_articles(selected_topic)
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
+    global search_term
     
     # loop through all articles
     i = 0
@@ -99,23 +103,41 @@ def refresh_articles():
 
         # pare down articles_list to just ones from specified source (source_dropdown)
         if source_dropdown.value == "All" or source_dropdown.value == article.source:
-            main_element.append(new_article)    # append article to <main>
+
+            # restrict articles based on search term (unless it's empty)
+            if search_term.lower() in article.title.lower() or search_term == "":
+                main_element.append(new_article)    # append article to <main>
+
+                # re-do all styling for articles that have been selected
+                for url in selected_urls:
+                    if(url == article.url):
+                        new_article.style.backgroundColor = darkest_gray
+
+                i = i + 1
+                if(i > max_num_displayed_articles):
+                    break
+        
+        # if user only wants to see selected articles
+        if source_dropdown.value == "Selected":
 
             # re-do all styling for articles that have been selected
             for url in selected_urls:
                 if(url == article.url):
                     new_article.style.backgroundColor = darkest_gray
+                    main_element.append(new_article)    # append article to <main>
+    
+    if keep_search_term is False:
+        search_bar = document.querySelector("input")    # select search bar
+        search_bar.value = ""           # clear search bar
+        search_term = ""                # clear search_term
 
-            i = i + 1
-            if(i > 100):
-                break
+refresh_articles(False)
 
-refresh_articles()
+# Event Listeners ------------------------------------------
 
 # called when generate button clicked
 # enter selected article's URLs into local storage
 def generate(event):
-    print(str(len(selected_urls)))
     localStorage.setItem(config.localStorage_lenth_key, str(len(selected_urls)))    # holds number of selected articles
     for i, url in enumerate(selected_urls):
         key = "url" + str(i)
@@ -125,13 +147,33 @@ def generate(event):
 def topic_dropdown_clicked(event):
     global selected_topic
     selected_topic = event.target.value
-    refresh_articles()
+    refresh_articles(False)
 
 # called when new dropdown item selected
 def source_dropdown_clicked(event):
     global selected_source
     selected_source = event.target.value
-    refresh_articles()
+    refresh_articles(False)
+
+# called when keydown event triggered in search bar
+def search_bar_entered(event):
+    global search_term
+    if event.key == "Enter":
+        search_term = event.target.value    # update search term
+        refresh_articles(True)              # update displayed articles
+
+# called when < See More > Button clicked
+def see_more_button_clicked(event):
+    global max_num_displayed_articles
+    max_num_displayed_articles += config.display_article_increment
+    refresh_articles(True)  # True passed to keep search term
+
+# called when < See Less > Button clicked
+def see_less_button_clicked(event):
+    global max_num_displayed_articles
+    if(max_num_displayed_articles > config.display_article_increment):
+        max_num_displayed_articles -= config.display_article_increment
+        refresh_articles(True)  # True passed to keep search term
 
 # called when article clicked
 def article_clicked(event):
