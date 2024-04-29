@@ -46,11 +46,15 @@
                 <p class="articleCount"></p>
             </li>
             <li>
-                <input type="search" placeholder="Search Article..."/>
+                <input type="search" placeholder="Search Article..." py-keydown="search_bar_entered"/>
             </li>
         </ul>
 
         <main></main>
+        <footer>
+            <button py-click="see_less_button_clicked">&lt See Less &gt</button>
+            <button py-click="see_more_button_clicked">&lt See More &gt</button>
+        </footer>
         <script type="py" src="./index.py" config="./pyscript.toml"></script>
     </body>
 </html>
