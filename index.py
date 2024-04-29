@@ -25,6 +25,7 @@ max_num_displayed_articles = config.display_article_increment    # total number 
 # Instantiate database
 db = Database()
 
+
 # Populate dropdowns in the header -------------------------------------------------
 
 # populate the topics dropdown
@@ -51,15 +52,100 @@ for art_source in config.master_sources:
 article_count = document.querySelector(".articleCount")
 article_count.innerText = "Articles Selected: 0/" + str(config.max_selection)
 
+# Helper functions -----------------------------------------------------------------
+
+# Set multiple attributes easily
+def setAttributes(elem, attrs):         # elem = DOM element, attrs = dictionary
+    for key, value in attrs.items():
+        elem.setAttribute(key, value)
+
+# ----------------------------------------------------------------------------------
+
+# Creates and appends elements to action_bar
+# Input: none
+# Output: newly setup action_bar <div>
+def create_Action_Bar():
+    print("setActionButtons called")
+    # create <div> for actions bar
+    new_action_bar = document.createElement("div")
+    new_action_bar.classList.add("actions-bar")
+
+    # create <ul> for left-side and right-side of actions bar
+    actions_left_list = []      # holds list of elements to put into new_actions_left
+    actions_right_list = []     # holds list of elements to put into new_actions_right
+    
+    new_actions_left = document.createElement("ul")
+    new_actions_left.classList.add("actions-ul", "actions-ul-left")
+    
+    new_actions_right = document.createElement("ul")
+    new_actions_right.classList.add("actions-ul", "actions-ul-right")
+
+    # create <li> for left-side and right-side action buttons
+    # interested button
+    new_interested = document.createElement("li")
+    new_interested.classList.add("action-li", "interested-li")
+
+    new_interested_button = document.createElement("button")
+    new_interested_button.classList.add("action-button", "interested-button")
+    setAttributes(new_interested_button, {"type": "button", "py-click": "interested_clicked"})
+
+    new_interested_img = document.createElement("img")
+    setAttributes(new_interested_img, {"src": "./assets/svg/thumbs-up-neutral.svg", "alt": "thumbs up icon", "height": "30px", "width": "30px"})
+
+    # uninterested button
+    new_uninterested = document.createElement("li") 
+    new_uninterested.classList.add("action-li", "uninterested-li")
+
+    new_uninterested_button = document.createElement("button")
+    new_uninterested_button.classList.add("action-button", "uninterested-button")
+    setAttributes(new_uninterested_button, {"type": "button", "py-click": "uninterested_clicked"})
+
+    new_uninterested_img = document.createElement("img")
+    setAttributes(new_uninterested_img, {"src": "./assets/svg/thumbs-down-neutral.svg", "alt": "thumbs down icon", "height": "30px", "width": "30px"})
+
+    # bookmark button
+    new_bookmark = document.createElement("li")
+    new_bookmark.classList.add("action-li", "save-li")
+
+    new_bookmark_button = document.createElement("button")
+    new_bookmark_button.classList.add("action-button")
+    setAttributes(new_bookmark_button, {"type": "button", "py-click": "bookmark_clicked"})
+
+    new_bookmark_img = document.createElement("img")
+    setAttributes(new_bookmark_img, {"src": "assets/svg/bookmark-neutral.svg", "alt": "bookmark icon", "height": "30px", "width": "30px"})
+
+    actions_left_list.append((new_interested, new_interested_button, new_interested_img))
+    actions_left_list.append((new_uninterested, new_uninterested_button, new_uninterested_img))
+    actions_right_list.append((new_bookmark, new_bookmark_button, new_bookmark_img))
+
+    # append left and right <li>'s to their respectives <ul>s
+    for (li, button, img) in actions_left_list:
+        button.append(img)
+        li.append(button)
+        new_actions_left.append(li)
+    for (li, button, img) in actions_right_list:
+        button.append(img)
+        li.append(button)
+        new_actions_right.append(li)
+
+    new_action_bar.append(new_actions_left)
+    new_action_bar.append(new_actions_right)
+
+    return new_action_bar
+
 # Creates an article HTML element
 # Input: Article object
 # Returns new article
 def create_article(article):
     # create article
-    new_article = document.createElement("article")
+    new_article = document.createElement("article")     # will have main <div> and action bar <div> as children
     new_article.setAttribute("py-click", "article_clicked")
 
-    # create <h3> header
+    # create main content <div>
+    new_main = document.createElement("div")    # will house main content (main div -> h3, a, p)
+    new_main.classList.add("article-main")
+
+    # create <h3> heading
     new_header = document.createElement("h3")
 
     # create <a> link
@@ -76,15 +162,24 @@ def create_article(article):
     another_tag = document.createElement("li")  # create tag for source
     another_tag.innerText = article.source
 
+
+    # create paragraph
     new_text = document.createElement("p")      # create paragraph
     new_text.innerText = article.content[:250].strip() + "..."   # add text blurb (250 char limit)
+    
+    # create action bar
+    new_action_bar = create_Action_Bar()
+    
+
 
     new_header.append(new_link)                 # place <a> into <h3>
-    new_article.append(new_header)              # place <h3> into <article>
+    new_main.append(new_header)                 # place <h3> into main content <div>
     new_tags.append(new_tag)                    # place <li> into <ul>
     new_tags.append(another_tag)                # place <li> into <ul>
-    new_article.append(new_tags)                # place <ul> into <article>
-    new_article.append(new_text)                # place <p> into <article>
+    new_main.append(new_tags)                   # place <ul> into main content <div>
+    new_main.append(new_text)                   # place <p> into main content <div>
+    new_article.append(new_main)                # append main content <div> to <article>
+    new_article.append(new_action_bar)          # place .action-bar into <article>
 
     return new_article
 
