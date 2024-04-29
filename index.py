@@ -57,8 +57,6 @@ def setAttributes(elem, attrs):         # elem = DOM element, attrs = dictionary
     for key, value in attrs.items():
         elem.setAttribute(key, value)
 
-
-
 # ----------------------------------------------------------------------------------
 
 # Creates and appends elements to action_bar
@@ -154,13 +152,6 @@ def create_article(article):
     new_link.target = "_blank"                  # open in new tab
     new_link.innerText = article.title          # set title
 
-    # create paragraph
-    new_text = document.createElement("p")      
-    new_text.innerText = article.content[:250] + "..."   # add text blurb (250 char limit)
-
-    # create action bar
-    new_action_bar = create_Action_Bar()
-
     # create <ul> for tags
     new_tags = document.createElement("ul")     # create tags list
     new_tags.classList.add("tags")              # add 'tags' class
@@ -169,18 +160,21 @@ def create_article(article):
     another_tag = document.createElement("li")  # create tag for source
     another_tag.innerText = article.source
 
+    # create paragraph
+    new_text = document.createElement("p")      
+    new_text.innerText = article.content[:250] + "..."   # add text blurb (250 char limit)
+    
+    # create action bar
+    new_action_bar = create_Action_Bar()
 
     new_header.append(new_link)                 # place <a> into <h3>
-    new_main.append(new_header)              # place <h3> into <article>
+    new_main.append(new_header)                 # place <h3> into main content <div>
     new_tags.append(new_tag)                    # place <li> into <ul>
     new_tags.append(another_tag)                # place <li> into <ul>
-    new_main.append(new_tags)                # place <ul> into <article>
-    new_main.append(new_text)                # place <p> into <article>
-
-    
-
-    new_article.append(new_main) 
-    new_article.append(new_action_bar)         # place .action-bar into <article>
+    new_main.append(new_tags)                   # place <ul> into main content <div>
+    new_main.append(new_text)                   # place <p> into main content <div>
+    new_article.append(new_main)                # append main content <div> to <article>
+    new_article.append(new_action_bar)          # place .action-bar into <article>
 
     return new_article
 
