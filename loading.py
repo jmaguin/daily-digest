@@ -1,6 +1,7 @@
 from js import localStorage
 from js import setInterval
 from js import clearInterval
+from js import window
 from pyscript import document
 from pyweb import pydom
 from Database import *
@@ -32,10 +33,10 @@ num_of_urls = localStorage.getItem(config.localStorage_lenth_key)
 
 # if num_of_urls is not in local storage do not try to get the urls
 # this check is needed to prevent an error message from showing up
-if num_of_urls is None:
+if int(num_of_urls) == 0:
     print("localStorage_length_key not found.")
     localStorage.clear()    # clear the localStorage
-    # TODO: automatic redirect to previous page (index.py)?
+    window.location.href = "index.html" # redirect back to home page
 else:
     # loop and add Article objects to selected_articles
     for i in range(int(num_of_urls)):
