@@ -85,10 +85,13 @@ article:hover {
     cursor: pointer;
 }
 
-article:active {
+/* this is now implemented using event listeners */
+/* article:active {
+    
     transition: 0.1s;
     transform: scale(0.99);
-}
+    
+} */
 
 .actions-bar {
     display: flex;
