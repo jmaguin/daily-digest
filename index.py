@@ -20,6 +20,7 @@ selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
 search_term = ""    # value of search bar
+max_num_displayed_articles = config.display_article_increment    # total number of articles to display
 
 # Instantiate database
 db = Database()
@@ -113,7 +114,7 @@ def refresh_articles(keep_search_term):
                         new_article.style.backgroundColor = darkest_gray
 
                 i = i + 1
-                if(i > config.display_article_limit):
+                if(i > max_num_displayed_articles):
                     break
         
         # if user only wants to see selected articles
@@ -159,13 +160,20 @@ def search_bar_entered(event):
     global search_term
     if event.key == "Enter":
         search_term = event.target.value    # update search term
-        print(search_term)
         refresh_articles(True)              # update displayed articles
 
 # called when < See More > Button clicked
 def see_more_button_clicked(event):
-    config.display_article_limit += 50
+    global max_num_displayed_articles
+    max_num_displayed_articles += config.display_article_increment
     refresh_articles(True)  # True passed to keep search term
+
+# called when < See Less > Button clicked
+def see_less_button_clicked(event):
+    global max_num_displayed_articles
+    if(max_num_displayed_articles > config.display_article_increment):
+        max_num_displayed_articles -= config.display_article_increment
+        refresh_articles(True)  # True passed to keep search term
 
 # called when article clicked
 def article_clicked(event):
@@ -187,7 +195,6 @@ def article_clicked(event):
     if len(selected_urls) < config.max_selection:
         selected_urls.append(selected_article_url)
         selected_article_html.style.backgroundColor = darkest_gray
-        print(len(selected_urls))
 
     # update article counter
     article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
