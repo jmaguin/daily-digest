@@ -65,7 +65,7 @@ def create_article(article):
     new_link = document.createElement("a")      # create link
     new_link.href = article.url                 # set link attribute
     new_link.target = "_blank"                  # open in new tab
-    new_link.innerText = article.title          # set title
+    new_link.innerText = article.title.strip()  # set title
 
     # create <ul> for tags
     new_tags = document.createElement("ul")     # create tags list
@@ -76,7 +76,7 @@ def create_article(article):
     another_tag.innerText = article.source
 
     new_text = document.createElement("p")      # create paragraph
-    new_text.innerText = article.content[:250] + "..."   # add text blurb (250 char limit)
+    new_text.innerText = article.content[:250].strip() + "..."   # add text blurb (250 char limit)
 
     new_header.append(new_link)                 # place <a> into <h3>
     new_article.append(new_header)              # place <h3> into <article>
@@ -88,9 +88,9 @@ def create_article(article):
     return new_article
 
 # refresh displayed articles based on topic
-def refresh_articles():
+# keep_search_term: if True, maintain article sorting by the search term
+def refresh_articles(keep_search_term):
     articles_list = db.get_articles(selected_topic)
-    print(len(articles_list))
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
     global search_term
@@ -113,14 +113,24 @@ def refresh_articles():
                         new_article.style.backgroundColor = darkest_gray
 
                 i = i + 1
-                if(i > 50):
+                if(i > config.display_article_limit):
                     break
-    
-    search_bar = document.querySelector("input")    # select search bar
-    search_bar.value = ""           # clear search bar
-    search_term = ""                # clear search_term
+        
+        # if user only wants to see selected articles
+        if source_dropdown.value == "Selected":
 
-refresh_articles()
+            # re-do all styling for articles that have been selected
+            for url in selected_urls:
+                if(url == article.url):
+                    new_article.style.backgroundColor = darkest_gray
+                    main_element.append(new_article)    # append article to <main>
+    
+    if keep_search_term is False:
+        search_bar = document.querySelector("input")    # select search bar
+        search_bar.value = ""           # clear search bar
+        search_term = ""                # clear search_term
+
+refresh_articles(False)
 
 # Event Listeners ------------------------------------------
 
@@ -136,13 +146,13 @@ def generate(event):
 def topic_dropdown_clicked(event):
     global selected_topic
     selected_topic = event.target.value
-    refresh_articles()
+    refresh_articles(False)
 
 # called when new dropdown item selected
 def source_dropdown_clicked(event):
     global selected_source
     selected_source = event.target.value
-    refresh_articles()
+    refresh_articles(False)
 
 # called when keydown event triggered in search bar
 def search_bar_entered(event):
@@ -150,7 +160,12 @@ def search_bar_entered(event):
     if event.key == "Enter":
         search_term = event.target.value    # update search term
         print(search_term)
-        refresh_articles()                  # update displayed articles
+        refresh_articles(True)              # update displayed articles
+
+# called when < See More > Button clicked
+def see_more_button_clicked(event):
+    config.display_article_limit += 50
+    refresh_articles(True)  # True passed to keep search term
 
 # called when article clicked
 def article_clicked(event):
@@ -172,6 +187,7 @@ def article_clicked(event):
     if len(selected_urls) < config.max_selection:
         selected_urls.append(selected_article_url)
         selected_article_html.style.backgroundColor = darkest_gray
+        print(len(selected_urls))
 
     # update article counter
     article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
