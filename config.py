@@ -31,3 +31,4 @@ max_selection = 3   # max num of articles that can be selected
 display_article_increment = 25  # number of displayed articles to increment by
 
 localStorage_lenth_key = "num_of_urls"  # key of localStorage value with total number of URLs saved
+localStorage_summary_key = "articles_summary"  # key of localStorage value with LLM summary generated in loading.py
