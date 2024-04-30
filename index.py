@@ -2,6 +2,7 @@ from js import localStorage
 from pyscript import document
 from pyweb import pydom
 from pyodide.ffi import create_proxy
+import json
 import config
 from Database import *
 from Article import *
@@ -20,6 +21,7 @@ darkest_accent_color = "#346634"
 selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
+liked_articles = [] # keeps track of liked articles
 search_term = ""    # value of search bar
 max_num_displayed_articles = config.display_article_increment    # total number of articles to display
 
@@ -31,19 +33,19 @@ db = Database()
 
 # populate the topics dropdown
 topic_dropdown = document.getElementById("topicDropdown")  # find dropdown element
+topic_dropdown.setAttribute("py-click", "topic_dropdown_clicked")
 for topic in config.master_tags:
     new_option = document.createElement("option")   # create option element
     new_option.value = topic
-    new_option.setAttribute("py-click", "topic_dropdown_clicked")
     new_option.innerText = topic.capitalize()
     topic_dropdown.append(new_option) # append to DOM
 
 # populate the sources dropdown
 source_dropdown = document.getElementById("sourceDropdown")  # find dropdown element
+source_dropdown.setAttribute("py-click", "source_dropdown_clicked")
 for art_source in config.master_sources:
     new_option = document.createElement("option")   # create option element
     new_option.value = art_source
-    new_option.setAttribute("py-click", "source_dropdown_clicked")
     new_option.innerText = art_source
     source_dropdown.append(new_option) # append to DOM
 
@@ -143,12 +145,23 @@ def article_pointer_up(event):
     selected_article_html.style.transform = f"scale(1)"
 
 def action_pointer_down(event):
-    print("STOP PROPAGATING")
+    # print("STOP PROPAGATING")
     selected_button = event.currentTarget
     event.stopPropagation()
 
 def interested_clicked(event):
     print("interested clicked")
+    selected_button = event.currentTarget
+
+    # change img color
+    selected_image = selected_button.querySelector("img")
+    # selected_image.src = "./assets/svg/thumbs-up-active.svg"
+
+    selected_button.setAttribute("id", "intrested")
+    liked_articles.append("hey")
+
+    localStorage.setItem("liked_articles", json.stringify(liked_articles))
+
     event.stopPropagation()
     
 def uninterested_clicked(event):
@@ -165,7 +178,6 @@ def bookmark_clicked(event):
 # Input: none
 # Output: newly setup action_bar <div>
 def create_action_bar():
-    print("setActionButtons called")
     # create <div> for actions bar
     new_action_bar = document.createElement("div")
     new_action_bar.classList.add("actions-bar")
