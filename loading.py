@@ -29,17 +29,21 @@ timer_element = document.querySelector("h2")   # select <h2>
 db = Database()
 
 # get all selected articles using URLs from localStorage
-num_of_urls = localStorage.getItem(config.localStorage_lenth_key)
+num_of_urls_string = localStorage.getItem(config.localStorage_lenth_key)
+num_of_urls = 0
+
+# Check if num_of_urls_string is NoneType
+if num_of_urls_string is not None:  # check to avoid calling int() on NoneType
+    num_of_urls = int(num_of_urls_string)
 
 # if num_of_urls is not in local storage do not try to get the urls
-# this check is needed to prevent an error message from showing up
-if int(num_of_urls) == 0:
+if num_of_urls == 0:
     print("localStorage_length_key not found.")
-    localStorage.clear()    # clear the localStorage
+    # localStorage.clear()    # clear the localStorage
     window.location.href = "index.html" # redirect back to home page
 else:
     # loop and add Article objects to selected_articles
-    for i in range(int(num_of_urls)):
+    for i in range(num_of_urls):
         url = localStorage.getItem("url" + str(i))  # retrieve url from localStorage
         this_article = db.get_article(url)  # turn URL into Article object
 

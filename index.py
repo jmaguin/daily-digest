@@ -159,8 +159,18 @@ def interested_clicked(event):
 
     selected_button.setAttribute("id", "intrested")
     liked_articles.append("hey")
+    liked_articles.append("yo")
 
-    localStorage.setItem("liked_articles", json.stringify(liked_articles))
+    print(json.dumps(liked_articles))
+
+    localStorage.setItem("liked_articles", json.dumps(liked_articles))
+
+    liked2 = localStorage.getItem("liked_articles")
+    liked3 = json.loads(liked2)
+
+    liked3.append("omg")
+    print(type(liked2))
+    print(liked3)
 
     event.stopPropagation()
     
