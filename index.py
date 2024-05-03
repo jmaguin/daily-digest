@@ -1,9 +1,11 @@
 from js import localStorage
+from js import window
 from pyscript import document
 from pyweb import pydom
 from pyodide.ffi import create_proxy
 import json
 import config
+import local_storage
 from Database import *
 from Article import *
 import sqlite3
@@ -70,12 +72,20 @@ def setAttributes(elem, attrs):
 # Event Listeners ------------------------------------------
 
 # called when generate button clicked
-# enter selected article's URLs into local storage
+# Query database to turn selected_urls into Article objects
+# Save Article objects into localStorage
 def generate(event):
-    localStorage.setItem(config.localStorage_lenth_key, str(len(selected_urls)))    # holds number of selected articles
-    for i, url in enumerate(selected_urls):
-        key = "url" + str(i)
-        localStorage.setItem(key, url)
+    # if no selected articles, do nothing
+    if len(selected_urls) == 0:
+        return
+    
+    # Save selected URLs as Article objects in localStorage
+    selected_articles = []
+    for url in selected_urls:
+        selected_articles.append(db.get_article(url))
+    local_storage.save_articles(selected_articles)
+
+    window.location.href = "loading.html" # redirect to loading page
 
 # called when new dropdown item selected
 def topic_dropdown_clicked(event):
@@ -114,7 +124,7 @@ def article_clicked(event):
     selected_article_html = event.currentTarget     # HTML object of selected article
     selected_article_url = selected_article_html.querySelector("a").href
 
-    # iterate thru selected_articles
+    # iterate thru selected_urls
     # check to see if already clicked
     for url in selected_urls:
         # article has already been clicked
