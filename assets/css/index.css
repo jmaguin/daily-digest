@@ -66,6 +66,7 @@ article {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: space-between;
     flex-basis: 29%;
     margin: 1rem;
     padding-left: 0.5rem;
@@ -77,16 +78,67 @@ article {
     user-select: none;
 }
 
+.article-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
 article:hover {
     transition: 0.1s;
     transform: scale(1.05);
     cursor: pointer;
 }
 
-article:active {
+/* this is now implemented using event listeners */
+/* article:active {
+    
     transition: 0.1s;
     transform: scale(0.99);
+    
+} */
+
+.actions-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    min-height: 35px;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
 }
+
+.actions-ul {
+    all: unset;
+
+    display: flex;
+}
+
+.actions-ul-left > li > button {
+    margin-right: 1rem
+}
+
+.action-li {
+    all: unset;
+
+}
+
+.action-button {
+    all: unset;
+    display: flex;
+    flex-direction: row;
+    width: 40px;
+    height: 40px;
+    background-size: cover;
+}
+
+
+.action-button img {
+    width: 80%;
+    height: 80%;
+    margin: auto;
+}
+
 
 footer {
     display: flex;
@@ -118,3 +170,4 @@ button:hover {
     transition: 0.1s;
     transform: scale(1.05);
 }
+

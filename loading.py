@@ -4,12 +4,10 @@ from js import clearInterval
 from js import window
 from pyscript import document
 from pyweb import pydom
-from Database import *
 from Article import *
 from pyodide.ffi import create_proxy
 import config
-
-
+import local_storage
 
 # Color palette -> from index.css
 gray = "#444444"
@@ -20,36 +18,15 @@ accent_color = "#58a858"
 dark_accent_color = "#438143"
 darkest_accent_color = "#346634"
 
-selected_articles = []  # list of articles selected on index.html (Article objects)
+# list of articles selected on index.html (Article objects)
+selected_articles = local_storage.retrieve_articles()
+if len(selected_articles) == 0:
+    local_storage.clear_local_storage()     # clear localStorage
+    window.location.href = "index.html" # redirect back to home page
 
 timer_value = 0 # starting value for timer to count from
 timer_element = document.querySelector("h2")   # select <h2>
 
-# Begin connection to database
-db = Database()
-
-# get all selected articles using URLs from localStorage
-num_of_urls = localStorage.getItem(config.localStorage_lenth_key)
-
-# if num_of_urls is not in local storage do not try to get the urls
-# this check is needed to prevent an error message from showing up
-if int(num_of_urls) == 0:
-    print("localStorage_length_key not found.")
-    localStorage.clear()    # clear the localStorage
-    window.location.href = "index.html" # redirect back to home page
-else:
-    # loop and add Article objects to selected_articles
-    for i in range(int(num_of_urls)):
-        url = localStorage.getItem("url" + str(i))  # retrieve url from localStorage
-        this_article = db.get_article(url)  # turn URL into Article object
-
-        # ensure article was found
-        if this_article is None:
-            print("Article could not be located in database.\nURL: " + url)
-        else:
-            selected_articles.append(this_article)
-
-localStorage.clear()    # clear the localStorage
 
 # Timer ---------------------------------------
 # refresh timer
@@ -75,10 +52,14 @@ interval_id = setInterval(timer_proxy, 1000)  # call update_timer() every 1sec
 
 
 # LLM Code here ------------------------------------------->
+summary = "Hello this is my summary and it is very cool and accurate."
 
 
 
+
+# Save summary
+local_storage.save_articles_summary(summary)
 # ------------------------------------------------------------<
 
-# Uncomment once LLM Code done
-# clearInterval(interval_id)
+window.location.href = "summary.html" # redirect to summary page
+clearInterval(interval_id)  # stop counter
