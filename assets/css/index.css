@@ -56,6 +56,11 @@ article h3 a:hover{
     color: #87CEFA    
 }
 
+/* Article title font color */
+article h3 a {
+    color: white;
+}
+
 /* Articles */
 article {
     display: flex;
