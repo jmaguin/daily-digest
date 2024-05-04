@@ -148,7 +148,7 @@ def article_clicked(event):
     article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
 
 # Shrinks article a bit on pointer down
-def article_pointer_down(event):
+def article_shrink(event):
     selected_article_html = event.currentTarget
     # make article shrink on pointer down by adding a class
     selected_article_html.style.transition = "0.1s"
@@ -162,7 +162,7 @@ def article_scale_reset(event):
     selected_article_html.style.transform = f"scale(1)"
 
 # Grows article on hover
-def article_pointer_over(event):
+def article_grow(event):
     selected_article_html = event.currentTarget
     # stop grow on hover
     selected_article_html.style.transition = "0.1s"
@@ -177,17 +177,17 @@ def create_article(article):
     new_article = document.createElement("article")     # will have main <div> and action bar <div> as children
     new_article.setAttribute("py-click", "article_clicked")
 
-    pd = create_proxy(article_pointer_down)
-    po = create_proxy(article_pointer_over)
-    scale_reset = create_proxy(article_scale_reset)
+    # create event listeners for shrinking and growing the articles
+    shrink = create_proxy(article_shrink)
+    grow = create_proxy(article_grow)
+    reset = create_proxy(article_scale_reset)
 
-    
-    new_article.addEventListener("pointerdown", pd)
-    new_article.addEventListener("pointerover", po)
-    new_article.addEventListener("pointerup", po)
+    new_article.addEventListener("pointerdown", shrink)     # shrink on pointer down
+    new_article.addEventListener("pointerover", grow)       # grow on pointer over
+    new_article.addEventListener("pointerup", grow)         # grow on pointer up (needed for it to grow after clicking down)
 
     # new_article.addEventListener("pointerup", scale_reset)
-    new_article.addEventListener("pointerout", scale_reset)
+    new_article.addEventListener("pointerout", reset)
 
     # new_article.addEventListener("pointerout", pu)
 
