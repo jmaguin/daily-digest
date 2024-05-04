@@ -137,12 +137,21 @@ def article_clicked(event):
             selected_article_html.style.backgroundColor = gray
             # update article counter
             article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
+
+            # set generate button color
+            if len(selected_urls) == 0:
+                generate_button = document.querySelector(".navbar .button")
+                generate_button.style.color = "var(--text-color)"
+
             return
 
     # if num of selected articles lower than max allowed, select it
     if len(selected_urls) < config.max_selection:
         selected_urls.append(selected_article_url)
         selected_article_html.style.backgroundColor = darkest_gray
+        # set generate button color
+        generate_button = document.querySelector(".navbar .button")
+        generate_button.style.color = "white"
 
     # update article counter
     article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
@@ -274,14 +283,7 @@ def refresh_articles(keep_search_term):
         search_bar.value = ""           # clear search bar
         search_term = ""                # clear search_term
 
-# Update user information from Local storage
-# def load_user_info():
-#     global liked_articles, disliked_articles, bookmarked_articles
-#     liked_articles = local_storage.get_liked_articles()
-#     disliked_articles = local_storage.get_disliked_articles()
-#     bookmarked_articles = local_storage.get_bookmarked_articles()
-    
 
-buttons.load_user_info()
+buttons.load_user_info()    # Update user information from Local storage
 refresh_articles(False)
 
