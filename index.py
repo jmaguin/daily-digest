@@ -159,12 +159,10 @@ def article_pointer_down(event):
 def article_scale_reset(event):
     selected_article_html = event.currentTarget
     # stop shrink by removing the class
-    # print(selected_article_html.style)
     selected_article_html.style.transform = f"scale(1)"
 
 # Grows article on hover
 def article_pointer_over(event):
-    print("pointer over")
     selected_article_html = event.currentTarget
     # stop grow on hover
     selected_article_html.style.transition = "0.1s"
@@ -236,7 +234,6 @@ def create_article(article):
 # refresh displayed articles based on topic
 # keep_search_term: if True, maintain article sorting by the search term
 def refresh_articles(keep_search_term):
-    print("refresh articles called")
     articles_list = db.get_articles(selected_topic)
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main

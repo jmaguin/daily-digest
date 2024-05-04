@@ -25,7 +25,7 @@ def setAttributes(elem, attrs):
 # ----------------------------------------------------------------------------------
 
 def like_clicked(event):
-    print("liked clicked")
+    # print("liked clicked")
     global liked_articles, disliked_articles
 
     selected_button = event.currentTarget                                                               # selected button
@@ -46,7 +46,7 @@ def like_clicked(event):
 
     
 def dislike_clicked(event):
-    print("disliked clicked")
+    # print("disliked clicked")
     global disliked_articles, liked_articles
 
     selected_button = event.currentTarget                                                       # selected button
@@ -63,7 +63,7 @@ def dislike_clicked(event):
     event.stopPropagation()
 
 def bookmark_clicked(event):
-    print("bookmark clicked")
+    # print("bookmark clicked")
     global bookmarked_articles   # use global list variable bookmarked_articles
 
     selected_button = event.currentTarget                                                       # selected button
