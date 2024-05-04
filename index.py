@@ -24,6 +24,9 @@ selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
 liked_articles = [] # keeps track of liked articles
+disliked_articles = [] # keeps track of disliked articles
+bookmarked_articles = [] # keeps track of bookmarked articles
+
 search_term = ""    # value of search bar
 max_num_displayed_articles = config.display_article_increment    # total number of articles to display
 
@@ -143,53 +146,185 @@ def article_clicked(event):
     # update article counter
     article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
 
+# Shrinks article a bit on pointer down
 def article_pointer_down(event):
     selected_article_html = event.currentTarget
     # make article shrink on pointer down by adding a class
     selected_article_html.style.transition = "0.1s"
     selected_article_html.style.transform = f"scale(0.98)"
 
+# Grows article back to normal on pointer up
 def article_pointer_up(event):
     selected_article_html = event.currentTarget
     # stop shrink by removing the class
     selected_article_html.style.transform = f"scale(1)"
 
+# stops propagation on pointer down for action buttons - might not be needed anymore?
 def action_pointer_down(event):
     # print("STOP PROPAGATING")
     selected_button = event.currentTarget
     event.stopPropagation()
 
-def interested_clicked(event):
-    print("interested clicked")
+def like_clicked(event):
+    print("liked clicked")
+    global liked_articles, disliked_articles
+    already_liked = False
+    already_disliked = False
+
+    # get selected button and img
     selected_button = event.currentTarget
-
-    # change img color
     selected_image = selected_button.querySelector("img")
-    # selected_image.src = "./assets/svg/thumbs-up-active.svg"
+    # get article element of the liked article
+    selected_article = selected_button.parentElement.parentElement.parentElement.parentElement
+    # get url string from href
+    selected_url = selected_article.querySelector("h3 a").getAttribute("href")
+    # get corresponding dislike button and dislike img
+    dislike_button = selected_button.parentElement.parentElement.querySelector(".dislike-button")
+    dislike_img = dislike_button.querySelector("img")
 
-    selected_button.setAttribute("id", "intrested")
-    liked_articles.append("hey")
-    liked_articles.append("yo")
+    # if no url string is found -> return
+    if len(selected_url) == 0:
+        event.stopPropagation()
+        return
 
-    print(json.dumps(liked_articles))
-
-    localStorage.setItem("liked_articles", json.dumps(liked_articles))
-
-    liked2 = localStorage.getItem("liked_articles")
-    liked3 = json.loads(liked2)
-
-    liked3.append("omg")
-    print(type(liked2))
-    print(liked3)
-
-    event.stopPropagation()
+    # check if url is already in liked_articles
+    for url in liked_articles:
+        if url == selected_url:
+            already_liked = True
+            break
     
-def uninterested_clicked(event):
-    print("unintereseted clicked")
+    # check if url is already in disliked_articles
+    for url in disliked_articles:
+        if url == selected_url:
+            already_disliked = True
+            break
+    
+    # If already disliked and not already liked -> remove dislike
+    if already_disliked and not already_liked:
+        print("already disliked")
+        dislike_button.classList.remove("disliked")                     # remove class "disliked" from button
+        dislike_img.src = "./assets/svg/thumbs-down-neutral.svg"        # change img color
+        disliked_articles.remove(selected_url)                          # update global disliked_articles
+        local_storage.set_disliked_articles(disliked_articles)          # update localStorage
+
+    # If already liked -> Unlike
+    if already_liked == True:
+        selected_button.classList.remove("liked")                       # remove class "liked" from button
+        selected_image.src = "./assets/svg/thumbs-up-neutral.svg"       # change img color
+        liked_articles.remove(selected_url)                             # update global liked_articles
+        local_storage.set_liked_articles(liked_articles)                # update localStorage
+
+    # If not already liked -> Like
+    if not already_liked:
+        selected_button.classList.add("liked")                          # add class "liked" from button
+        selected_image.src = "./assets/svg/thumbs-up-active.svg"        # change img color
+        liked_articles.append(selected_url)                             # update global liked_articles
+        local_storage.set_liked_articles(liked_articles)                # update localStorage
+
+    # Stop Propagation in all cases
+    event.stopPropagation()
+
+    
+def dislike_clicked(event):
+    print("disliked clicked")
+    global disliked_articles, liked_articles
+    already_disliked = False
+    already_liked = False
+
+
+    # get selected button and img
+    selected_button = event.currentTarget
+    selected_image = selected_button.querySelector("img")
+    # get article element of the liked article
+    selected_article = selected_button.parentElement.parentElement.parentElement.parentElement
+    # get url string from href
+    selected_url = selected_article.querySelector("h3 a").getAttribute("href")
+    # get corresponding like button and like img
+    like_button = selected_button.parentElement.parentElement.querySelector(".like-button")
+    like_img = like_button.querySelector("img")
+
+    # if no url string is found -> return
+    if len(selected_url) == 0:
+        event.stopPropagation()
+        return
+
+    # check if url is already in disliked_articles
+    for url in disliked_articles:
+        if url == selected_url:
+            already_disliked = True
+            break
+
+    # check if url is already in liked_articles
+    for url in liked_articles:
+        if url == selected_url:
+            already_liked = True
+            break
+    
+    # If already liked and not already disliked -> remove like
+    if already_liked and not already_disliked:
+        like_button.classList.remove("liked")                           # remove class "disliked" from button
+        like_img.src = "./assets/svg/thumbs-up-neutral.svg"             # change img color
+        liked_articles.remove(selected_url)                             # update global disliked_articles
+        local_storage.set_liked_articles(disliked_articles)             # update localStorage
+
+    # If already disliked -> Undislike
+    if already_disliked == True:
+        selected_button.classList.remove("disliked")                    # remove class "disliked" from button
+        selected_image.src = "./assets/svg/thumbs-down-neutral.svg"     # change img color
+        disliked_articles.remove(selected_url)                          # update global disliked_articles
+        local_storage.set_disliked_articles(disliked_articles)          # update localStorage
+
+    # If not already disliked -> dislike
+    if not already_disliked:
+        print("disliking")
+        selected_button.classList.add("disliked")                       # add class "disliked" from button
+        selected_image.src = "./assets/svg/thumbs-down-active.svg"      # change img color
+        disliked_articles.append(selected_url)                          # update global disliked_articles
+        local_storage.set_disliked_articles(disliked_articles)          # update localStorage
+
+    # Stop Propagation in all cases
     event.stopPropagation()
 
 def bookmark_clicked(event):
     print("bookmark clicked")
+    global bookmarked_articles   # use global list variable bookmarked_articles
+    already_bookmarked = False
+
+    # get selected button and img
+    selected_button = event.currentTarget
+    selected_image = selected_button.querySelector("img")
+    # get article element of the bookmarked article
+    selected_article = selected_button.parentElement.parentElement.parentElement.parentElement
+    # get url string from href
+    selected_url = selected_article.querySelector("h3 a").getAttribute("href")
+
+    # if no url string is found -> return
+    if len(selected_url) == 0:
+        event.stopPropagation()
+        return
+
+    # check if url is already in bookmarked_articles
+    for url in bookmarked_articles:
+        if url == selected_url:
+            already_bookmarked = True
+            break
+
+    # If already bookmarked -> unbookmark
+    if already_bookmarked == True:
+        selected_button.classList.remove("bookmarked")                  # remove class "bookmarked" from button
+        selected_image.src = "./assets/svg/bookmark-neutral.svg"        # change img color
+        bookmarked_articles.remove(selected_url)                        # update global bookmarked_articles
+        local_storage.set_bookmarked_articles(bookmarked_articles)      # update localStorage
+
+    # If not already bookmarked -> bookmark
+    if not already_bookmarked:
+        print("disliking")
+        selected_button.classList.add("bookmarked")                     # add class "bookmarked" from button
+        selected_image.src = "./assets/svg/bookmark-active.svg"         # change img color
+        bookmarked_articles.append(selected_url)                        # update global bookmarked_articles
+        local_storage.set_bookmarked_articles(bookmarked_articles)      # update localStorage
+
+    # Stop Propagation in all cases
     event.stopPropagation()
 
 # --------------------------------------------------------------------
@@ -197,7 +332,9 @@ def bookmark_clicked(event):
 # Creates and appends elements to action_bar
 # Input: none
 # Output: newly setup action_bar <div>
-def create_action_bar():
+def create_action_bar(url):
+    global liked_articles, disliked_articles, bookmarked_articles
+
     # create <div> for actions bar
     new_action_bar = document.createElement("div")
     new_action_bar.classList.add("actions-bar")
@@ -213,27 +350,38 @@ def create_action_bar():
     new_actions_right.classList.add("actions-ul", "actions-ul-right")
 
     # create <li> for left-side and right-side action buttons
-    # interested button
-    new_interested = document.createElement("li")
-    new_interested.classList.add("action-li", "interested-li")
 
-    new_interested_button = document.createElement("button")
-    new_interested_button.classList.add("action-button", "interested-button")
-    setAttributes(new_interested_button, {"type": "button", "py-click": "interested_clicked"})
+    # like button
+    new_like = document.createElement("li")
+    new_like.classList.add("action-li", "like-li")
 
-    new_interested_img = document.createElement("img")
-    setAttributes(new_interested_img, {"src": "./assets/svg/thumbs-up-neutral.svg", "alt": "thumbs up icon", "height": "30px", "width": "30px"})
+    new_like_button = document.createElement("button")
+    new_like_button.classList.add("action-button", "like-button")
+    setAttributes(new_like_button, {"type": "button", "py-click": "like_clicked"})
 
-    # uninterested button
-    new_uninterested = document.createElement("li") 
-    new_uninterested.classList.add("action-li", "uninterested-li")
+    new_like_img = document.createElement("img")
+    like_img_src = "./assets/svg/thumbs-up-neutral.svg"
+    for link in liked_articles:
+        if link == url:
+            like_img_src = "./assets/svg/thumbs-up-active.svg"
+            break
+    setAttributes(new_like_img, {"src": like_img_src, "alt": "thumbs up icon", "height": "30px", "width": "30px"})
 
-    new_uninterested_button = document.createElement("button")
-    new_uninterested_button.classList.add("action-button", "uninterested-button")
-    setAttributes(new_uninterested_button, {"type": "button", "py-click": "uninterested_clicked"})
+    # dislike button
+    new_dislike = document.createElement("li") 
+    new_dislike.classList.add("action-li", "dislike-li")
 
-    new_uninterested_img = document.createElement("img")
-    setAttributes(new_uninterested_img, {"src": "./assets/svg/thumbs-down-neutral.svg", "alt": "thumbs down icon", "height": "30px", "width": "30px"})
+    new_dislike_button = document.createElement("button")
+    new_dislike_button.classList.add("action-button", "dislike-button")
+    setAttributes(new_dislike_button, {"type": "button", "py-click": "dislike_clicked"})
+
+    new_dislike_img = document.createElement("img")
+    dislike_img_src = "./assets/svg/thumbs-down-neutral.svg"
+    for link in disliked_articles:
+        if link == url:
+            dislike_img_src = "./assets/svg/thumbs-down-active.svg"
+            break
+    setAttributes(new_dislike_img, {"src": dislike_img_src, "alt": "thumbs down icon", "height": "30px", "width": "30px"})
 
     # bookmark button
     new_bookmark = document.createElement("li")
@@ -244,10 +392,15 @@ def create_action_bar():
     setAttributes(new_bookmark_button, {"type": "button", "py-click": "bookmark_clicked"})
 
     new_bookmark_img = document.createElement("img")
-    setAttributes(new_bookmark_img, {"src": "assets/svg/bookmark-neutral.svg", "alt": "bookmark icon", "height": "30px", "width": "30px"})
+    bookmark_img_src = "./assets/svg/bookmark-neutral.svg"
+    for link in bookmarked_articles:
+        if link == url:
+            bookmark_img_src = "./assets/svg/bookmark-active.svg"
+            break
+    setAttributes(new_bookmark_img, {"src": bookmark_img_src, "alt": "bookmark icon", "height": "30px", "width": "30px"})
 
-    actions_left_list.append((new_interested, new_interested_button, new_interested_img))
-    actions_left_list.append((new_uninterested, new_uninterested_button, new_uninterested_img))
+    actions_left_list.append((new_like, new_like_button, new_like_img))
+    actions_left_list.append((new_dislike, new_dislike_button, new_dislike_img))
     actions_right_list.append((new_bookmark, new_bookmark_button, new_bookmark_img))
 
     # append left and right <li>'s to their respectives <ul>s
@@ -311,7 +464,7 @@ def create_article(article):
     new_text.innerText = article.content[:250].strip() + "..."   # add text blurb (250 char limit)
     
     # create action bar
-    new_action_bar = create_action_bar()
+    new_action_bar = create_action_bar(article.url)
     
     new_header.append(new_link)                 # place <a> into <h3>
     new_main.append(new_header)                 # place <h3> into main content <div>
@@ -327,6 +480,7 @@ def create_article(article):
 # refresh displayed articles based on topic
 # keep_search_term: if True, maintain article sorting by the search term
 def refresh_articles(keep_search_term):
+    print("refresh articles called")
     articles_list = db.get_articles(selected_topic)
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
@@ -367,5 +521,14 @@ def refresh_articles(keep_search_term):
         search_bar.value = ""           # clear search bar
         search_term = ""                # clear search_term
 
+# Update user information from Local storage
+def load_user_info():
+    global liked_articles, disliked_articles, bookmarked_articles
+    liked_articles = local_storage.get_liked_articles()
+    disliked_articles = local_storage.get_disliked_articles()
+    bookmarked_articles = local_storage.get_bookmarked_articles()
+    
+
+load_user_info()
 refresh_articles(False)
 

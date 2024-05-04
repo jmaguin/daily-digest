@@ -16,7 +16,7 @@ darkest_accent_color = "#346634"
 # list of articles selected on index.html (Article objects)
 selected_articles = local_storage.retrieve_articles()
 if len(selected_articles) == 0:
-    local_storage.clear_local_storage()     # clear localStorage
+    local_storage.clear_temp_local_storage()     # clear localStorage
     window.location.href = "index.html" # redirect back to home page
 
 summary = local_storage.retrieve_articles_summary()     # get summary generated in loading.py
@@ -46,4 +46,4 @@ for article in selected_articles:
     new_list_item.append(new_link)
     citations.append(new_list_item)             # add new citation to UL
 
-local_storage.clear_local_storage()     # clear localStorage
+local_storage.clear_temp_local_storage()     # clear localStorage
