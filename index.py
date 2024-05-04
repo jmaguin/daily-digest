@@ -94,14 +94,18 @@ def generate(event):
 # called when new dropdown item selected
 def topic_dropdown_clicked(event):
     global selected_topic
-    selected_topic = event.target.value
-    refresh_articles(False)
+    # Only refresh articles if selected topic has changed
+    if event.target.value != selected_topic:
+        selected_topic = event.target.value
+        refresh_articles(False)
 
 # called when new dropdown item selected
 def source_dropdown_clicked(event):
     global selected_source
-    selected_source = event.target.value
-    refresh_articles(False)
+    # Only refresh articles if selected source has changed
+    if event.target.value != selected_source:
+        selected_source = event.target.value
+        refresh_articles(False)
 
 # called when keydown event triggered in search bar
 def search_bar_entered(event):
