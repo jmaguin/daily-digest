@@ -84,13 +84,13 @@ article {
     align-items: flex-start;
 }
 
-article:hover {
+/* this is now implemented using event listeners */
+/* article:hover {
     transition: 0.1s;
     transform: scale(1.05);
     cursor: pointer;
-}
+} */
 
-/* this is now implemented using event listeners */
 /* article:active {
     
     transition: 0.1s;
@@ -169,5 +169,13 @@ button {
 button:hover {
     transition: 0.1s;
     transform: scale(1.05);
+}
+
+.action-button:hover {
+    transition: 0.1s;
+    transform: scale(1.05);
+}
+.action-button:active {
+    transform: scale(0.95);
 }
 

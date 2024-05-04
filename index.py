@@ -24,9 +24,9 @@ darkest_accent_color = "#346634"
 selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
-liked_articles = [] # keeps track of liked articles
-disliked_articles = [] # keeps track of disliked articles
-bookmarked_articles = [] # keeps track of bookmarked articles
+# liked_articles = [] # keeps track of liked articles
+# disliked_articles = [] # keeps track of disliked articles
+# bookmarked_articles = [] # keeps track of bookmarked articles
 
 search_term = ""    # value of search bar
 max_num_displayed_articles = config.display_article_increment    # total number of articles to display
@@ -152,164 +152,24 @@ def article_pointer_down(event):
     selected_article_html = event.currentTarget
     # make article shrink on pointer down by adding a class
     selected_article_html.style.transition = "0.1s"
-    selected_article_html.style.transform = f"scale(0.98)"
+    selected_article_html.style.transform = f"scale(0.99)"
+
 
 # Grows article back to normal on pointer up
-def article_pointer_up(event):
+def article_scale_reset(event):
     selected_article_html = event.currentTarget
     # stop shrink by removing the class
+    # print(selected_article_html.style)
     selected_article_html.style.transform = f"scale(1)"
 
-# stops propagation on pointer down for action buttons - might not be needed anymore?
-def action_pointer_down(event):
-    # print("STOP PROPAGATING")
-    selected_button = event.currentTarget
-    event.stopPropagation()
+# Grows article on hover
+def article_pointer_over(event):
+    print("pointer over")
+    selected_article_html = event.currentTarget
+    # stop grow on hover
+    selected_article_html.style.transition = "0.1s"
+    selected_article_html.style.transform = f"scale(1.03)"
 
-def like_clicked(event):
-    print("liked clicked")
-    global liked_articles, disliked_articles
-
-    selected_button = event.currentTarget                                                               # selected button
-    selected_img = selected_button.querySelector("img")                                                 # selected img
-    selected_article = selected_button.parentElement.parentElement.parentElement.parentElement          # article element of liked article
-    selected_url = selected_article.querySelector("h3 a").getAttribute("href")                          # url string from href
-    dislike_button = selected_button.parentElement.parentElement.querySelector(".dislike-button")       # corresponding dislike button
-    dislike_img = dislike_button.querySelector("img")                                                   # img of corresponding dislike button
-    
-    # Toggle the button visuals and update localStorage
-    buttons.toggle_like(liked_articles, disliked_articles, selected_url, selected_button, selected_img, dislike_button, dislike_img)
-
-    # Stop Propagation in all cases
-    event.stopPropagation()
-
-    
-def dislike_clicked(event):
-    print("disliked clicked")
-    global disliked_articles, liked_articles
-
-    selected_button = event.currentTarget                                                       # selected button
-    selected_img = selected_button.querySelector("img")                                         # selected img
-    selected_article = selected_button.parentElement.parentElement.parentElement.parentElement  # article element of disliked article
-    selected_url = selected_article.querySelector("h3 a").getAttribute("href")                  # url string from href
-    like_button = selected_button.parentElement.parentElement.querySelector(".like-button")     # corresponding like button 
-    like_img = like_button.querySelector("img")                                                 # img of corresponding like button
-
-    # Toggle the button visuals and update localStorage
-    buttons.toggle_dislike(disliked_articles, liked_articles, selected_url, selected_button, selected_img, like_button, like_img)
-
-    # Stop Propagation in all cases
-    event.stopPropagation()
-
-def bookmark_clicked(event):
-    print("bookmark clicked")
-    global bookmarked_articles   # use global list variable bookmarked_articles
-
-    selected_button = event.currentTarget                                                       # selected button
-    selected_img = selected_button.querySelector("img")                                         # selected img
-    selected_article = selected_button.parentElement.parentElement.parentElement.parentElement  # article element of disliked article
-    selected_url = selected_article.querySelector("h3 a").getAttribute("href")                  # url string from href
-
-    # Toggle the button visuals and update localStorage
-    buttons.toggle_bookmark(bookmarked_articles, selected_url, selected_button, selected_img)
-    
-    # Stop Propagation in all cases
-    event.stopPropagation()
-
-# --------------------------------------------------------------------
-
-# Creates and appends elements to action_bar
-# Input: none
-# Output: newly setup action_bar <div>
-def create_action_bar(url):
-    global liked_articles, disliked_articles, bookmarked_articles
-
-    # create <div> for actions bar
-    new_action_bar = document.createElement("div")
-    new_action_bar.classList.add("actions-bar")
-
-    # create <ul> for left-side and right-side of actions bar
-    actions_left_list = []      # holds list of elements to put into new_actions_left
-    actions_right_list = []     # holds list of elements to put into new_actions_right
-    
-    new_actions_left = document.createElement("ul")
-    new_actions_left.classList.add("actions-ul", "actions-ul-left")
-    
-    new_actions_right = document.createElement("ul")
-    new_actions_right.classList.add("actions-ul", "actions-ul-right")
-
-    # create <li> for left-side and right-side action buttons
-
-    # like button
-    new_like = document.createElement("li")
-    new_like.classList.add("action-li", "like-li")
-
-    new_like_button = document.createElement("button")
-    new_like_button.classList.add("action-button", "like-button")
-    setAttributes(new_like_button, {"type": "button", "py-click": "like_clicked"})
-
-    new_like_img = document.createElement("img")
-    like_img_src = "./assets/svg/thumbs-up-neutral.svg"
-    for link in liked_articles:
-        if link == url:
-            like_img_src = "./assets/svg/thumbs-up-active.svg"
-            break
-    setAttributes(new_like_img, {"src": like_img_src, "alt": "thumbs up icon", "height": "30px", "width": "30px"})
-
-    # dislike button
-    new_dislike = document.createElement("li") 
-    new_dislike.classList.add("action-li", "dislike-li")
-
-    new_dislike_button = document.createElement("button")
-    new_dislike_button.classList.add("action-button", "dislike-button")
-    setAttributes(new_dislike_button, {"type": "button", "py-click": "dislike_clicked"})
-
-    new_dislike_img = document.createElement("img")
-    dislike_img_src = "./assets/svg/thumbs-down-neutral.svg"
-    for link in disliked_articles:
-        if link == url:
-            dislike_img_src = "./assets/svg/thumbs-down-active.svg"
-            break
-    setAttributes(new_dislike_img, {"src": dislike_img_src, "alt": "thumbs down icon", "height": "30px", "width": "30px"})
-
-    # bookmark button
-    new_bookmark = document.createElement("li")
-    new_bookmark.classList.add("action-li", "save-li")
-
-    new_bookmark_button = document.createElement("button")
-    new_bookmark_button.classList.add("action-button")
-    setAttributes(new_bookmark_button, {"type": "button", "py-click": "bookmark_clicked"})
-
-    new_bookmark_img = document.createElement("img")
-    bookmark_img_src = "./assets/svg/bookmark-neutral.svg"
-    for link in bookmarked_articles:
-        if link == url:
-            bookmark_img_src = "./assets/svg/bookmark-active.svg"
-            break
-    setAttributes(new_bookmark_img, {"src": bookmark_img_src, "alt": "bookmark icon", "height": "30px", "width": "30px"})
-
-    actions_left_list.append((new_like, new_like_button, new_like_img))
-    actions_left_list.append((new_dislike, new_dislike_button, new_dislike_img))
-    actions_right_list.append((new_bookmark, new_bookmark_button, new_bookmark_img))
-
-    # append left and right <li>'s to their respectives <ul>s
-    for (li, button, img) in actions_left_list:
-        apd = create_proxy(action_pointer_down)
-        button.addEventListener("pointerdown", apd)
-        button.append(img)
-        li.append(button)
-        new_actions_left.append(li)
-
-    for (li, button, img) in actions_right_list:
-        button.append(img)
-        button.addEventListener("pointerdown", apd)
-        li.append(button)
-        new_actions_right.append(li)
-
-    new_action_bar.append(new_actions_left)
-    new_action_bar.append(new_actions_right)
-
-    return new_action_bar
 
 # Creates an article HTML element
 # Input: Article object
@@ -320,11 +180,18 @@ def create_article(article):
     new_article.setAttribute("py-click", "article_clicked")
 
     pd = create_proxy(article_pointer_down)
-    new_article.addEventListener("pointerdown", pd)
+    po = create_proxy(article_pointer_over)
+    scale_reset = create_proxy(article_scale_reset)
 
-    pu = create_proxy(article_pointer_up)
-    new_article.addEventListener("pointerup", pu)
-    new_article.addEventListener("pointerout", pu)
+    
+    new_article.addEventListener("pointerdown", pd)
+    new_article.addEventListener("pointerover", po)
+    new_article.addEventListener("pointerup", po)
+
+    # new_article.addEventListener("pointerup", scale_reset)
+    new_article.addEventListener("pointerout", scale_reset)
+
+    # new_article.addEventListener("pointerout", pu)
 
     # create main content <div>
     new_main = document.createElement("div")    # will house main content (main div -> h3, a, p)
@@ -353,7 +220,7 @@ def create_article(article):
     new_text.innerText = article.content[:250].strip() + "..."   # add text blurb (250 char limit)
     
     # create action bar
-    new_action_bar = create_action_bar(article.url)
+    new_action_bar = buttons.create_action_bar(article.url)
     
     new_header.append(new_link)                 # place <a> into <h3>
     new_main.append(new_header)                 # place <h3> into main content <div>
@@ -411,13 +278,13 @@ def refresh_articles(keep_search_term):
         search_term = ""                # clear search_term
 
 # Update user information from Local storage
-def load_user_info():
-    global liked_articles, disliked_articles, bookmarked_articles
-    liked_articles = local_storage.get_liked_articles()
-    disliked_articles = local_storage.get_disliked_articles()
-    bookmarked_articles = local_storage.get_bookmarked_articles()
+# def load_user_info():
+#     global liked_articles, disliked_articles, bookmarked_articles
+#     liked_articles = local_storage.get_liked_articles()
+#     disliked_articles = local_storage.get_disliked_articles()
+#     bookmarked_articles = local_storage.get_bookmarked_articles()
     
 
-load_user_info()
+buttons.load_user_info()
 refresh_articles(False)
 
