@@ -10,16 +10,6 @@ from Database import *
 from Article import *
 import sqlite3
 
-
-# Color palette -> from index.css
-gray = "#444444"
-dark_gray = "#313131"
-darkest_gray = "#292929"
-text_color = "#c0c0c0"
-accent_color = "#58a858"
-dark_accent_color = "#438143"
-darkest_accent_color = "#346634"
-
 selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
@@ -29,7 +19,6 @@ max_num_displayed_articles = config.display_article_increment    # total number 
 
 # Instantiate database
 db = Database()
-
 
 # Populate dropdowns in the header -------------------------------------------------
 
@@ -130,7 +119,7 @@ def article_clicked(event):
         # article has already been clicked
         if selected_article_url == url:
             selected_urls.remove(selected_article_url)
-            selected_article_html.style.backgroundColor = gray
+            selected_article_html.style.backgroundColor = config.gray
             # update article counter
             article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
             return
@@ -138,7 +127,7 @@ def article_clicked(event):
     # if num of selected articles lower than max allowed, select it
     if len(selected_urls) < config.max_selection:
         selected_urls.append(selected_article_url)
-        selected_article_html.style.backgroundColor = darkest_gray
+        selected_article_html.style.backgroundColor = config.darkest_gray
 
     # update article counter
     article_count.innerHTML = "Articles Selected: " + str(len(selected_urls)) + "/" + str(config.max_selection)
@@ -347,7 +336,7 @@ def refresh_articles(keep_search_term):
                 # re-do all styling for articles that have been selected
                 for url in selected_urls:
                     if(url == article.url):
-                        new_article.style.backgroundColor = darkest_gray
+                        new_article.style.backgroundColor = config.darkest_gray
 
                 i = i + 1
                 if(i > max_num_displayed_articles):
@@ -359,7 +348,7 @@ def refresh_articles(keep_search_term):
             # re-do all styling for articles that have been selected
             for url in selected_urls:
                 if(url == article.url):
-                    new_article.style.backgroundColor = darkest_gray
+                    new_article.style.backgroundColor = config.darkest_gray
                     main_element.append(new_article)    # append article to <main>
     
     if keep_search_term is False:
