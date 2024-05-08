@@ -30,7 +30,10 @@ article .tags {
     justify-content: space-between;
     gap: 0.4rem;
     padding-left: 1.75rem;
+}
 
+.citations li:hover {
+    text-decoration: underline;
 }
 
 div h3 {

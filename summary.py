@@ -20,9 +20,14 @@ for article in selected_articles:
     tags.append(tag)
 
 article_tag = document.querySelector("article")     # select article tag
-paragraph_tag = document.createElement("p")         # create paragraph tag
-paragraph_tag.innerText = summary 
-article_tag.append(paragraph_tag)                   # add LLM summary to webpage
+summary_list = summary.splitlines()     # split LLM summary into list of strings, each item a paragraph
+
+# Loop thru each item (paragraph) in summary_list and make a <p> tag for it
+for p in summary_list:
+    if p != "":
+        paragraph_tag = document.createElement("p")         # create paragraph tag
+        paragraph_tag.innerText = p 
+        article_tag.append(paragraph_tag)                   # add LLM summary to webpage
 
 citations = document.querySelector(".citations")     # select UL that contains citations
 # add citation for each article used in summary
