@@ -113,15 +113,24 @@ def load_user_info(db):
     bookmarked_articles = local_storage.get_bookmarked_articles()
 
     con = db.get_con()
-    data = pd.read_sql_query("SELECT * from articles LIMIT 100", con)
+    data = pd.read_sql_query("SELECT * from articles", con)
     data["title"] = data["title"].fillna("")
     tfidf = TfidfVectorizer(stop_words="english")
     tfidf_matrix = tfidf.fit_transform(data["title"])
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
     print(data.index)
     indices = pd.Series(data.index, index=data["title"]).drop_duplicates()
+    title = "New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal"
+    idx = indices[title]
+    sim_scores = enumerate(cosine_sim[idx])
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+    sim_scores = sim_scores[1:11]
+    for i in sim_scores:
+        print(i)
     
-    print(tfidf_matrix)
+    sim_index = [i[0] for i in sim_scores]
+    print(data["title"].iloc[sim_index])
+    
     print("Done")
 
 # Creates and appends elements to action_bar
