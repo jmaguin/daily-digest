@@ -3,10 +3,11 @@
 ## Installation Instructions:
 1. Download project
 2. Run ```pip install python-dateutil```
-3. Run ```pip install openai```
-4. Run ```pip install beautifulsoup4```
-5. Run ```pip install micropip```
-6. Run ```pip install toml```
+3. Run ```pip install python-dotenv```
+4. Run ```pip install openai```
+5. Run ```pip install beautifulsoup4```
+6. Run ```pip install micropip```
+7. Run ```pip install toml```
 
 ## Scraper Running instructions:
 1. Install project
