@@ -9,6 +9,13 @@
 6. Run ```pip install micropip```
 7. Run ```pip install toml```
 
+## Website Running Instructions:
+1. Install project
+2. Modify the  ```.env``` file to contain your OpenAI API key
+3. Download extension: Live Server by Ritwick Dey (https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
+4. Open ```index.html``` in a VS Code tab
+5. Do Ctrl + Shift + P and click the option ```Live Server: Open With Live Server```
+
 ## Scraper Running instructions:
 1. Install project
 2. navigate to /daily-digest. run ```python -m scraper.scraper_main.```      
@@ -24,12 +31,6 @@ Note: sqlite3 is included in Python. No install is necessary.
 - create new instance e.g. ```cnn = Cnn()```
 - loop through each found article and add it to the database
 - ensure each tag in list of master_tags in config.py
-
-## Website Running Instructions:
-1. Install project
-2. Download extension: Live Server by Ritwick Dey (https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
-3. Open ```index.html``` in a VS Code tab
-4. Do Ctrl + Shift + P and click the option ```Live Server: Open With Live Server```
 
 ## Files:
 ### Daily Digest
