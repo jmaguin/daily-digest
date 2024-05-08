@@ -6,8 +6,11 @@ from pyscript import document
 from pyweb import pydom
 from Article import *
 from pyodide.ffi import create_proxy
+from dotenv import load_dotenv, find_dotenv
+from openai import OpenAI
 import config
 import local_storage
+import os
 
 # list of articles selected on index.html (Article objects)
 selected_articles = local_storage.retrieve_articles()
@@ -42,14 +45,44 @@ interval_id = setInterval(timer_proxy, 1000)  # call update_timer() every 1sec
 # ----------------------------------------------------
 
 
-# LLM Code here ------------------------------------------->
-summary = "Hello this is my summary and it is very cool and accurate."
+# LLM Code ------------------------------------------->
+summary = "Error"
 
+load_dotenv(find_dotenv())  # load API key from .env
+client = OpenAI(api_key=os.getenv("API_KEY"))   # Open connection to OpenAI using API_KEY
 
+# LLM variables
+model = "gpt-4"
+llm_instructions = "You will be provided with a number of news articles. Your task is to summarize all key points mentioned in them in 5 paragraphs or less."
+selected_articles_content = ""
 
+# Iterate thru selected_articles and combine their content
+for article in selected_articles:
+    selected_articles_content = selected_articles_content + "\n" + article.content
 
-# Save summary
-local_storage.save_articles_summary(summary)
+print(selected_articles_content)
+
+messages = [
+    {"role": "system", "content": llm_instructions},
+    {"role": "user", "content": selected_articles_content}
+]
+temperature = 0.7
+max_tokens = 1000
+top_p = 1
+
+# Generate summary
+completion = client.chat.completions.create(
+    model = model,
+    messages = messages,
+    temperature = temperature,
+    max_tokens = max_tokens,
+    top_p = top_p
+)
+
+summary = completion.choices[0].message.content
+print(summary)
+
+local_storage.save_articles_summary(summary)    # save summary to localStorage
 # ------------------------------------------------------------<
 
 window.location.href = "summary.html" # redirect to summary page
