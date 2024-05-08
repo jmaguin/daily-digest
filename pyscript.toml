@@ -1,6 +1,6 @@
 name = "Daily Digest"
 
-packages = ["sqlite3", "python-dateutil"]
+packages = ["sqlite3", "python-dateutil", "python-dotenv", "openai", "ssl"]
 
 [files]
 "/config.py" = "./config.py"
