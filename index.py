@@ -1,17 +1,16 @@
-from js import localStorage
+# from js import localStorage
 from js import window
 from pyscript import document
 from pyweb import pydom
 from pyodide.ffi import create_proxy
-from sklearn.feature_extraction.text import TfidfVectorizer
-import json
+# from sklearn.feature_extraction.text import TfidfVectorizer
+# import json
 import config
 import buttons
 import local_storage
 
 from Database import *
 from Article import *
-import sqlite3
 
 
 
@@ -31,8 +30,6 @@ selected_urls = []  # tracks all articles the user has selected. URLs (strings)
 search_term = ""    # value of search bar
 max_num_displayed_articles = config.display_article_increment    # total number of articles to display
 
-# Instantiate database
-db = Database()
 
 
 # Populate dropdowns in the header -------------------------------------------------
@@ -61,6 +58,8 @@ for art_source in config.master_sources:
 article_count = document.querySelector(".articleCount")
 article_count.innerText = "Articles Selected: 0/" + str(config.max_selection)
 
+# Instantiate database
+db = Database()
 
 # Helper functions -----------------------------------------------------------------
 
@@ -242,12 +241,24 @@ def create_article(article):
 # refresh displayed articles based on topic
 # keep_search_term: if True, maintain article sorting by the search term
 def refresh_articles(keep_search_term):
-    articles_list = db.get_articles(selected_topic)
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
     global search_term
     
+    forYouSelected = True
+    if forYouSelected:
+        articles_list = buttons.getRecommendedArticles(db)
+        for article in articles_list:
+            new_article = create_article(article)   # create article
+            main_element.append(new_article)        # append article to <main>
+            # re-do all styling for articles that have been selected
+            for url in selected_urls:
+                if(url == article.url):
+                    new_article.style.backgroundColor = darkest_gray
+        return
+    
     # loop through all articles
+    articles_list = db.get_articles(selected_topic)
     i = 0
     for article in articles_list:
         new_article = create_article(article)   # create article
@@ -288,4 +299,3 @@ def refresh_articles(keep_search_term):
 
 buttons.load_user_info(db)    # Update user information from Local storage
 refresh_articles(False)
-

@@ -1,18 +1,15 @@
-from js import localStorage
-from pyweb import pydom
+# from js import localStorage
+# from pyweb import pydom
 from pyscript import document
-from pyweb import pydom
 from pyodide.ffi import create_proxy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import pandas as pd
-import numpy as np
+
 
 from Database import *
 from Article import *
-import json
 import local_storage
-import sqlite3
 
 
 # This file contains functions relating to action buttons
@@ -106,32 +103,115 @@ def action_pointer_up(event):
 
 # Update user information from Local storage
 def load_user_info(db):
-    print("Loading User Data")
     global liked_articles, disliked_articles, bookmarked_articles
     liked_articles = local_storage.get_liked_articles()
     disliked_articles = local_storage.get_disliked_articles()
     bookmarked_articles = local_storage.get_bookmarked_articles()
 
+def getRecommendedArticles(db):
+    print("Loading For You")
+    global liked_articles, disliked_articles
+    # Load database into pandas frame
     con = db.get_con()
-    data = pd.read_sql_query("SELECT * from articles", con)
-    data["title"] = data["title"].fillna("")
+    data = pd.read_sql_query("SELECT * from articles", con) # remember: "title", "url", "content", "date"
+
+    # Create TfidVectorizer object to transform data into a Tf-idf representation
     tfidf = TfidfVectorizer(stop_words="english")
-    tfidf_matrix = tfidf.fit_transform(data["title"])
+
+    # Combine title and content into a single string
+    data["titlecontent"] = data["content"].astype(str) + " " + data["title"].astype(str)
+    data["titlecontent"] = data["titlecontent"].fillna("")
+    tfidf_matrix = tfidf.fit_transform(data["titlecontent"])
+
+    # Calculate the cosine similarity matrix between articles
     cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-    print(data.index)
-    indices = pd.Series(data.index, index=data["title"]).drop_duplicates()
-    title = "New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal"
-    idx = indices[title]
-    sim_scores = enumerate(cosine_sim[idx])
+    
+    # Get indicies of data based on url
+    indices = pd.Series(data.index, index=data["url"]).drop_duplicates()
+
+    num_liked_articles = len(liked_articles)
+    count = 10
+
+
+    list_of_list_of_articles = []
+    if num_liked_articles == 0:
+        url = "https://www.pbs.org/newshour/politics/new-york-governor-wants-to-spend-2-4-billion-to-help-deal-with-migrant-influx-in-new-budget-proposal"
+        url2 = "https://apnews.com/article/democrats-border-security-congress-trump-57f62a34ce9c4c08d6e00795fcb24764"
+        # for debugging when liked_articles is empty
+        list_of_list_of_articles.append(getSimilarArticles(url, count, data, cosine_sim, indices))
+        print("url2")
+        list_of_list_of_articles.append(getSimilarArticles(url2, count, data, cosine_sim, indices))
+
+
+    for url in liked_articles:
+        list_of_list_of_articles.append(getSimilarArticles(url, count, data, cosine_sim, indices))
+    
+    final_list_of_articles = []
+
+    if len(list_of_list_of_articles) == 0:
+        return []
+    
+    # mix the lists together
+    for i in range(0, len(list_of_list_of_articles[0])):
+        for list in list_of_list_of_articles:
+            if (i < len(list_of_list_of_articles[0])):
+                candidate = list[i]
+                found = False
+
+                # loop through final list, don't add duplicates
+                for item in final_list_of_articles:
+                    if(item == candidate):
+                        found = True
+
+                if not found:
+                    final_list_of_articles.append(candidate)
+                    print(candidate.title)
+                    # print(final_list_of_articles)
+                else:
+                    print("duplicate")
+            else:
+                break
+    
+    return final_list_of_articles
+
+
+# gets 10 similar articles specified by url
+def getSimilarArticles(url, count, data, cosine_sim, indices):
+
+    # sample title and url
+    # title = "New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal"
+    # url = "https://www.pbs.org/newshour/politics/new-york-governor-wants-to-spend-2-4-billion-to-help-deal-with-migrant-influx-in-new-budget-proposal"
+    
+    # index of url
+    index = indices[url]
+
+    # enumerate to get (index, score)
+    sim_scores = enumerate(cosine_sim[index])
+
+    # sort sim_scores using lambda function (take x, sort based on x[1] (the score)) reverse=True means highest score at the top
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:11]
-    for i in sim_scores:
-        print(i)
+
+    # # the number 1 spot will be the article itself, so get spots 2-count+1
+    # sim_scores = sim_scores[1:(count+1)]
     
-    sim_index = [i[0] for i in sim_scores]
-    print(data["title"].iloc[sim_index])
+    # # get list of indexes from sim_scores
+    # # entry looks like this: (index, score) so i[0] is index
+    # sim_index = [i[0] for i in sim_scores]
+
+    article_tuple_list = []
+    added = 0
+    for i, score in sim_scores:
+        print(data["title"][i])
+        if added >= count:
+            break
+        # don't add the liked article itself
+        elif data["url"][i] != url:
+            article = Article(data["tag"][i], data["title"][i], data["source"][i], data["date"][i], data["url"][i], data["content"][i])
+            article_tuple_list.append(article)
+            added += 1
     
-    print("Done")
+    return article_tuple_list
+    
 
 # Creates and appends elements to action_bar
 # Input: none

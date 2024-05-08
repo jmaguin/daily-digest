@@ -3,8 +3,8 @@ import sqlite3
 import sys
 sys.path.append("../daily_digest/Article")
 from Article import *
-import dateutil.parser
-import datetime
+# import dateutil.parser
+# import datetime
 
 # Class for the database that stores all web scraper data.
 class Database:
