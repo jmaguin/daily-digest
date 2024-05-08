@@ -3,15 +3,13 @@
 ## Installation Instructions:
 1. Download project
 2. Run ```pip install python-dateutil```
-3. Run ```pip install python-dotenv```
-4. Run ```pip install openai```
-5. Run ```pip install beautifulsoup4```
-6. Run ```pip install micropip```
-7. Run ```pip install toml```
+3. Run ```pip install beautifulsoup4```
+4. Run ```pip install micropip```
+5. Run ```pip install toml```
 
 ## Website Running Instructions:
 1. Install project
-2. Modify the  ```.env``` file to contain your OpenAI API key
+2. Create a file named ```key.txt``` inside the project directory. Paste into it your OpenAI API key.
 3. Download extension: Live Server by Ritwick Dey (https://marketplace.visualstudio.com/items?itemName=ritwickdey.LiveServer)
 4. Open ```index.html``` in a VS Code tab
 5. Do Ctrl + Shift + P and click the option ```Live Server: Open With Live Server```
