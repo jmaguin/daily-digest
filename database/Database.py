@@ -30,6 +30,9 @@ class Database:
         self.cur.execute("CREATE TABLE IF NOT EXISTS articles(tag, title, source, date, url, content)")
         self.cur.execute("CREATE INDEX IF NOT EXISTS tag_idx ON articles(tag)")
 
+    def get_con(self):
+        return self.con
+    
     # Insert article into database
     # Ensures no duplicates
     # article of type Article

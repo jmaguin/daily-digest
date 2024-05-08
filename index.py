@@ -3,13 +3,16 @@ from js import window
 from pyscript import document
 from pyweb import pydom
 from pyodide.ffi import create_proxy
+from sklearn.feature_extraction.text import TfidfVectorizer
 import json
 import config
 import buttons
 import local_storage
+
 from Database import *
 from Article import *
 import sqlite3
+
 
 
 # Color palette -> from index.css
@@ -24,9 +27,6 @@ darkest_accent_color = "#346634"
 selected_topic = "politics" # value of the topic dropdown menu in index.html
 selected_source = "All" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
-# liked_articles = [] # keeps track of liked articles
-# disliked_articles = [] # keeps track of disliked articles
-# bookmarked_articles = [] # keeps track of bookmarked articles
 
 search_term = ""    # value of search bar
 max_num_displayed_articles = config.display_article_increment    # total number of articles to display
@@ -60,6 +60,7 @@ for art_source in config.master_sources:
 # intitialize article counter
 article_count = document.querySelector(".articleCount")
 article_count.innerText = "Articles Selected: 0/" + str(config.max_selection)
+
 
 # Helper functions -----------------------------------------------------------------
 
@@ -167,7 +168,6 @@ def article_shrink(event):
     selected_article_html.style.transition = "0.1s"
     selected_article_html.style.transform = f"scale(0.99)"
 
-
 # Grows article back to normal on pointer up
 def article_scale_reset(event):
     selected_article_html = event.currentTarget
@@ -198,11 +198,7 @@ def create_article(article):
     new_article.addEventListener("pointerdown", shrink)     # shrink on pointer down
     new_article.addEventListener("pointerover", grow)       # grow on pointer over
     new_article.addEventListener("pointerup", grow)         # grow on pointer up (needed for it to grow after clicking down)
-
-    # new_article.addEventListener("pointerup", scale_reset)
-    new_article.addEventListener("pointerout", reset)
-
-    # new_article.addEventListener("pointerout", pu)
+    new_article.addEventListener("pointerout", reset)       # reset scale when pointer leaves article
 
     # create main content <div>
     new_main = document.createElement("div")    # will house main content (main div -> h3, a, p)
@@ -224,7 +220,6 @@ def create_article(article):
     new_tag.innerText = article.date
     another_tag = document.createElement("li")  # create tag for source
     another_tag.innerText = article.source
-
 
     # create paragraph
     new_text = document.createElement("p")      # create paragraph
@@ -287,7 +282,10 @@ def refresh_articles(keep_search_term):
         search_bar.value = ""           # clear search bar
         search_term = ""                # clear search_term
 
+    
 
-buttons.load_user_info()    # Update user information from Local storage
+
+
+buttons.load_user_info(db)    # Update user information from Local storage
 refresh_articles(False)
 

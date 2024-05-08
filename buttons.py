@@ -3,15 +3,24 @@ from pyweb import pydom
 from pyscript import document
 from pyweb import pydom
 from pyodide.ffi import create_proxy
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import linear_kernel
+import pandas as pd
+import numpy as np
+
+from Database import *
 from Article import *
 import json
 import local_storage
+import sqlite3
+
 
 # This file contains functions relating to action buttons
 
 liked_articles = [] # keeps track of liked articles
 disliked_articles = [] # keeps track of disliked articles
 bookmarked_articles = [] # keeps track of bookmarked articles
+
 
 # Helper functions -----------------------------------------------------------------
 
@@ -96,11 +105,24 @@ def action_pointer_up(event):
     event.stopPropagation()
 
 # Update user information from Local storage
-def load_user_info():
+def load_user_info(db):
+    print("Loading User Data")
     global liked_articles, disliked_articles, bookmarked_articles
     liked_articles = local_storage.get_liked_articles()
     disliked_articles = local_storage.get_disliked_articles()
     bookmarked_articles = local_storage.get_bookmarked_articles()
+
+    con = db.get_con()
+    data = pd.read_sql_query("SELECT * from articles LIMIT 100", con)
+    data["title"] = data["title"].fillna("")
+    tfidf = TfidfVectorizer(stop_words="english")
+    tfidf_matrix = tfidf.fit_transform(data["title"])
+    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+    print(data.index)
+    indices = pd.Series(data.index, index=data["title"]).drop_duplicates()
+    
+    print(tfidf_matrix)
+    print("Done")
 
 # Creates and appends elements to action_bar
 # Input: none
