@@ -5,6 +5,8 @@ from pyodide.ffi import create_proxy
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 import pandas as pd
+import dateutil.parser as dateparser
+
 
 
 from Database import *
@@ -17,6 +19,12 @@ import local_storage
 liked_articles = [] # keeps track of liked articles
 disliked_articles = [] # keeps track of disliked articles
 bookmarked_articles = [] # keeps track of bookmarked articles
+
+update_for_you_signal = False   # signal checked in index.py to see if new likes have been added -> need to recalculate forYou list
+
+article_data = None
+cosine_sim = None
+indices = None
 
 
 # Helper functions -----------------------------------------------------------------
@@ -32,7 +40,7 @@ def setAttributes(elem, attrs):
 
 def like_clicked(event):
     # print("liked clicked")
-    global liked_articles, disliked_articles
+    global liked_articles, disliked_articles, update_for_you_signal
 
     selected_button = event.currentTarget                                                               # selected button
     selected_img = selected_button.querySelector("img")                                                 # selected img
@@ -47,6 +55,7 @@ def like_clicked(event):
     # Toggle the button visuals and update localStorage
     toggle_like(liked_articles, disliked_articles, selected_url, selected_button, selected_img, dislike_button, dislike_img)
 
+    update_for_you_signal = True
     # Stop Propagation in all cases
     event.stopPropagation()
 
@@ -101,117 +110,8 @@ def action_pointer_up(event):
     # selected_img.style.transform = f"scale(1)"
     event.stopPropagation()
 
-# Update user information from Local storage
-def load_user_info(db):
-    global liked_articles, disliked_articles, bookmarked_articles
-    liked_articles = local_storage.get_liked_articles()
-    disliked_articles = local_storage.get_disliked_articles()
-    bookmarked_articles = local_storage.get_bookmarked_articles()
-
-def getRecommendedArticles(db):
-    print("Loading For You")
-    global liked_articles, disliked_articles
-    # Load database into pandas frame
-    con = db.get_con()
-    data = pd.read_sql_query("SELECT * from articles", con) # remember: "title", "url", "content", "date"
-
-    # Create TfidVectorizer object to transform data into a Tf-idf representation
-    tfidf = TfidfVectorizer(stop_words="english")
-
-    # Combine title and content into a single string
-    data["titlecontent"] = data["content"].astype(str) + " " + data["title"].astype(str)
-    data["titlecontent"] = data["titlecontent"].fillna("")
-    tfidf_matrix = tfidf.fit_transform(data["titlecontent"])
-
-    # Calculate the cosine similarity matrix between articles
-    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-    
-    # Get indicies of data based on url
-    indices = pd.Series(data.index, index=data["url"]).drop_duplicates()
-
-    num_liked_articles = len(liked_articles)
-    count = 10
 
 
-    list_of_list_of_articles = []
-    if num_liked_articles == 0:
-        url = "https://www.pbs.org/newshour/politics/new-york-governor-wants-to-spend-2-4-billion-to-help-deal-with-migrant-influx-in-new-budget-proposal"
-        url2 = "https://apnews.com/article/democrats-border-security-congress-trump-57f62a34ce9c4c08d6e00795fcb24764"
-        # for debugging when liked_articles is empty
-        list_of_list_of_articles.append(getSimilarArticles(url, count, data, cosine_sim, indices))
-        print("url2")
-        list_of_list_of_articles.append(getSimilarArticles(url2, count, data, cosine_sim, indices))
-
-
-    for url in liked_articles:
-        list_of_list_of_articles.append(getSimilarArticles(url, count, data, cosine_sim, indices))
-    
-    final_list_of_articles = []
-
-    if len(list_of_list_of_articles) == 0:
-        return []
-    
-    # mix the lists together
-    for i in range(0, len(list_of_list_of_articles[0])):
-        for list in list_of_list_of_articles:
-            if (i < len(list_of_list_of_articles[0])):
-                candidate = list[i]
-                found = False
-
-                # loop through final list, don't add duplicates
-                for item in final_list_of_articles:
-                    if(item == candidate):
-                        found = True
-
-                if not found:
-                    final_list_of_articles.append(candidate)
-                    print(candidate.title)
-                    # print(final_list_of_articles)
-                else:
-                    print("duplicate")
-            else:
-                break
-    
-    return final_list_of_articles
-
-
-# gets 10 similar articles specified by url
-def getSimilarArticles(url, count, data, cosine_sim, indices):
-
-    # sample title and url
-    # title = "New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal"
-    # url = "https://www.pbs.org/newshour/politics/new-york-governor-wants-to-spend-2-4-billion-to-help-deal-with-migrant-influx-in-new-budget-proposal"
-    
-    # index of url
-    index = indices[url]
-
-    # enumerate to get (index, score)
-    sim_scores = enumerate(cosine_sim[index])
-
-    # sort sim_scores using lambda function (take x, sort based on x[1] (the score)) reverse=True means highest score at the top
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-
-    # # the number 1 spot will be the article itself, so get spots 2-count+1
-    # sim_scores = sim_scores[1:(count+1)]
-    
-    # # get list of indexes from sim_scores
-    # # entry looks like this: (index, score) so i[0] is index
-    # sim_index = [i[0] for i in sim_scores]
-
-    article_tuple_list = []
-    added = 0
-    for i, score in sim_scores:
-        print(data["title"][i])
-        if added >= count:
-            break
-        # don't add the liked article itself
-        elif data["url"][i] != url:
-            article = Article(data["tag"][i], data["title"][i], data["source"][i], data["date"][i], data["url"][i], data["content"][i])
-            article_tuple_list.append(article)
-            added += 1
-    
-    return article_tuple_list
-    
 
 # Creates and appends elements to action_bar
 # Input: none
@@ -425,3 +325,148 @@ def toggle_bookmark(bookmarked_articles, selected_url, selected_button, selected
         selected_img.src = "./assets/svg/bookmark-active.svg"           # change img color
         bookmarked_articles.append(selected_url)                        # update global bookmarked_articles
         local_storage.set_bookmarked_articles(bookmarked_articles)      # update localStorage
+
+# Update user information from Local storage
+def load_user_info():
+    global liked_articles, disliked_articles, bookmarked_articles
+    liked_articles = local_storage.get_liked_articles()
+    disliked_articles = local_storage.get_disliked_articles()
+    bookmarked_articles = local_storage.get_bookmarked_articles()
+
+def initialize_data_and_matrices(db):
+    print("init data")
+
+def getRecommendedArticles(db):
+    print("Loading For You")
+    global liked_articles, disliked_articles
+    final_list_of_articles = []
+    # Load database into pandas frame
+    con = db.get_con()
+    data = pd.read_sql_query("SELECT * from articles", con) # remember: "title", "url", "content", "date"
+
+    # Create TfidVectorizer object to transform data into a Tf-idf representation
+    tfidf = TfidfVectorizer(stop_words="english", max_features=20)
+
+    # Combine title and content into a single string
+    data["titlecontent"] = data["content"].astype(str) + " " + data["title"].astype(str)
+    data["titlecontent"] = data["titlecontent"].fillna("")
+    tfidf_matrix = tfidf.fit_transform(data["titlecontent"])
+
+    # Calculate the cosine similarity matrix between articles
+    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+    # print(type(cosine_sim))
+    
+    # Get indicies of data based on url
+    indices = pd.Series(data.index, index=data["url"]).drop_duplicates()
+
+    num_liked_articles = len(liked_articles)
+    count = 10
+
+    list_of_list_of_articles = []   # a list of lists of articles
+    if num_liked_articles == 0:
+        url = "https://www.pbs.org/newshour/politics/new-york-governor-wants-to-spend-2-4-billion-to-help-deal-with-migrant-influx-in-new-budget-proposal"
+        url2 = "https://apnews.com/article/democrats-border-security-congress-trump-57f62a34ce9c4c08d6e00795fcb24764"
+        # for debugging when liked_articles is empty
+        list_of_list_of_articles.append(getSimilarArticles(url, count, data, cosine_sim, indices))
+        list_of_list_of_articles.append(getSimilarArticles(url2, count, data, cosine_sim, indices))
+
+
+    # get list of similar articles for every article in liked
+    for url in liked_articles:
+        list_of_list_of_articles.append(getSimilarArticles(url, count, data, cosine_sim, indices))
+    
+
+    if len(list_of_list_of_articles) == 0:
+        return []
+    
+    # extend lists together
+    final_list_of_articles.extend(list_of_list_of_articles[0])
+    for i in range(1, len(list_of_list_of_articles)):
+        list = list_of_list_of_articles[i]
+
+        for i in range(0, len(list)):
+            candidate = list[i]
+            found = False
+
+            # loop through final list, don't add duplicates
+            for item in final_list_of_articles:
+                if(item == candidate):
+                    found = True
+
+            if not found:
+                final_list_of_articles.append(candidate)
+                # print(candidate.title)
+                # print(final_list_of_articles)
+            else:
+                print("duplicate")
+            
+    # sort final list of articles
+    final_list_of_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)
+
+    return final_list_of_articles
+
+# gets 10 similar articles specified by url
+def getSimilarArticles(url, count, data, cosine_sim, indices):
+
+    # sample title and url
+    # title = "New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal"
+    # url = "https://www.pbs.org/newshour/politics/new-york-governor-wants-to-spend-2-4-billion-to-help-deal-with-migrant-influx-in-new-budget-proposal"
+    
+    # index of url
+    index = indices[url]
+
+    # enumerate to get (index, score) of article specified by url
+    sim_scores = enumerate(cosine_sim[index])
+
+    # sort sim_scores using lambda function (take x, sort based on x[1] (the score)) reverse=True means highest score at the top
+    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+
+    # # the number 1 spot will be the article itself, so get spots 2-count+1
+    # sim_scores = sim_scores[1:(count+1)]
+    
+    # # get list of indexes from sim_scores
+    # # entry looks like this: (index, score) so i[0] is index
+    # sim_index = [i[0] for i in sim_scores]
+
+    article_tuple_list = []
+    added = 0
+    for i, score in sim_scores:
+        # print(data["title"][i])
+        if added >= count:
+            break
+        # don't add the liked article itself
+        elif data["url"][i] != url:
+            article = Article(data["tag"][i], data["title"][i], data["source"][i], data["date"][i], data["url"][i], data["content"][i])
+            article_tuple_list.append(article)
+            added += 1
+    
+    return article_tuple_list
+
+def get_bookmarked_articles(db):
+    global bookmarked_articles
+    print("get_bookmarked_articles")
+    articles = []
+    if len(bookmarked_articles) == 0:
+        bookmarked_articles = local_storage.get_bookmarked_articles()
+
+    for url in bookmarked_articles:
+        articles.append(db.get_article(url))
+
+    return articles
+
+def get_liked_articles(db):
+    global liked_articles
+    print("get_liked_articles")
+    articles = []
+    if len(liked_articles) == 0:
+        liked_articles = local_storage.get_liked_articles()
+    
+    print(liked_articles)
+
+    for url in liked_articles:
+        print("hey")
+        article = db.get_article(url)
+        print(article)
+        articles.append(article)
+
+    return articles

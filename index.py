@@ -3,16 +3,14 @@ from js import window
 from pyscript import document
 from pyweb import pydom
 from pyodide.ffi import create_proxy
-# from sklearn.feature_extraction.text import TfidfVectorizer
-# import json
+
+import dateutil.parser as dateparser
 import config
 import buttons
 import local_storage
 
 from Database import *
 from Article import *
-
-
 
 # Color palette -> from index.css
 gray = "#444444"
@@ -23,30 +21,41 @@ accent_color = "#58a858"
 dark_accent_color = "#438143"
 darkest_accent_color = "#346634"
 
-selected_topic = "politics" # value of the topic dropdown menu in index.html
-selected_source = "All" # value of the source dropdown menu in index.html
+selected_topic = "All Topics" # value of the topic dropdown menu in index.html
+selected_source = "All Sources" # value of the source dropdown menu in index.html
 selected_urls = []  # tracks all articles the user has selected. URLs (strings)
 
+segmented_select_value = "general"  # default selected
 search_term = ""    # value of search bar
 max_num_displayed_articles = config.display_article_increment    # total number of articles to display
+max_articles_possible = config.default_max_possible_articles_shown  # total number of articles that can be shown (default = 200) (decreases when showing For You)
 
+all_articles = []                  # list of all articles in database
+for_you_articles = []              # list of articles for you
 
+update_all_articles = True         # True when the all_articles list needs to be updated
+update_for_you_articles = True     # True when the for_you list needs to be updated
 
 # Populate dropdowns in the header -------------------------------------------------
 
 # populate the topics dropdown
 topic_dropdown = document.getElementById("topicDropdown")  # find dropdown element
 topic_dropdown.setAttribute("py-click", "topic_dropdown_clicked")
-for topic in config.master_tags:
+tags_and_all = []
+tags_and_all.append("All Topics")
+tags_and_all.extend(config.master_tags)
+for topic in tags_and_all:
     new_option = document.createElement("option")   # create option element
     new_option.value = topic
-    new_option.innerText = topic.capitalize()
+    new_option.innerText = topic.title()
     topic_dropdown.append(new_option) # append to DOM
 
 # populate the sources dropdown
 source_dropdown = document.getElementById("sourceDropdown")  # find dropdown element
 source_dropdown.setAttribute("py-click", "source_dropdown_clicked")
-for art_source in config.master_sources:
+sources_and_all = ["All Sources"]
+sources_and_all.extend(config.master_sources)
+for art_source in sources_and_all:
     new_option = document.createElement("option")   # create option element
     new_option.value = art_source
     new_option.innerText = art_source
@@ -117,13 +126,34 @@ def search_bar_entered(event):
 # called when < See More > Button clicked
 def see_more_button_clicked(event):
     global max_num_displayed_articles
+
+    # button should have no effect if number of articles currently displayed is less than max_num_displated_articles
+    if segmented_select_value == "liked" and len(buttons.liked_articles) < max_num_displayed_articles:
+        return
+    elif segmented_select_value == "bookmarked" and len(buttons.bookmarked_articles) < max_num_displayed_articles:
+        return
+    elif segmented_select_value == "for-you" and len(for_you_articles) < max_num_displayed_articles:
+        return
+    elif segmented_select_value == "general" and len(all_articles) < max_num_displayed_articles:
+        return
     max_num_displayed_articles += config.display_article_increment
     refresh_articles(True)  # True passed to keep search term
 
 # called when < See Less > Button clicked
 def see_less_button_clicked(event):
     global max_num_displayed_articles
-    if(max_num_displayed_articles > config.display_article_increment):
+
+    # button should have no effect if number of articles currently displayed is less than max_num_displated_articles
+    if segmented_select_value == "liked" and len(buttons.liked_articles) < max_num_displayed_articles:
+        return
+    elif segmented_select_value == "bookmarked" and len(buttons.bookmarked_articles) < max_num_displayed_articles:
+        return
+    elif segmented_select_value == "for-you" and len(for_you_articles) < max_num_displayed_articles:
+        return
+    elif segmented_select_value == "general" and len(all_articles) < max_num_displayed_articles:
+        return
+    
+    if max_num_displayed_articles > config.display_article_increment:
         max_num_displayed_articles -= config.display_article_increment
         refresh_articles(True)  # True passed to keep search term
 
@@ -179,6 +209,44 @@ def article_grow(event):
     # stop grow on hover
     selected_article_html.style.transition = "0.1s"
     selected_article_html.style.transform = f"scale(1.03)"
+
+# updates segmented_select_value variable and updates class
+def segmented_button_clicked(event):
+    global segmented_select_value, update_for_you_articles
+    target = event.currentTarget
+    parent = target.parentElement
+    value = target.value
+    # print(parent)
+
+    if value == segmented_select_value:
+        return
+
+    children = parent.querySelectorAll(".selected-segment")
+    if children is None:
+        return
+    
+    for child in children:
+        # print(child)
+        if child is not None:
+            child.classList.remove("selected-segment")
+
+    target.classList.add("selected-segment")
+    
+    print(value)
+    if value == "for-you" and segmented_select_value != value and (len(for_you_articles) == 0 or buttons.update_for_you_signal == True):
+        update_for_you_articles = True
+        segmented_select_value = target.value
+        refresh_articles(True)
+    elif value == "general" and segmented_select_value != value:
+        segmented_select_value = target.value
+        refresh_articles(True)
+    else:
+        segmented_select_value = target.value
+        refresh_articles(True)
+
+    print("segment selected")
+
+
 
 
 # Creates an article HTML element
@@ -240,32 +308,56 @@ def create_article(article):
 
 # refresh displayed articles based on topic
 # keep_search_term: if True, maintain article sorting by the search term
-def refresh_articles(keep_search_term):
+def refresh_articles(keep_search_term=True):
+    global search_term, for_you_articles, all_articles, update_all_articles, update_for_you_articles, segmented_select_value, db
+    articles_list = []  # list of 
+    
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
-    global search_term
+
+    forYouSelected = True 
+    print("refresh articles called")
+    print(segmented_select_value)
+
+    if segmented_select_value == "general":
+        if update_all_articles == True:
+            all_articles = db.get_all_articles()
+            all_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)
+            print("g hard reset")
+        else:
+            print("general soft reset")
+
+        articles_list = all_articles
+        update_all_articles = False
+
+    elif segmented_select_value == "for-you":
+        if update_for_you_articles == True: 
+            for_you_articles = buttons.getRecommendedArticles(db)
+            print("fy hard refresh")
+        else:
+            print("fy soft reset")
     
-    forYouSelected = True
-    if forYouSelected:
-        articles_list = buttons.getRecommendedArticles(db)
-        for article in articles_list:
-            new_article = create_article(article)   # create article
-            main_element.append(new_article)        # append article to <main>
-            # re-do all styling for articles that have been selected
-            for url in selected_urls:
-                if(url == article.url):
-                    new_article.style.backgroundColor = darkest_gray
-        return
+        update_for_you_articles = False
+        articles_list = for_you_articles
+
+    elif segmented_select_value == "liked":
+        articles_list = buttons.get_liked_articles(db) 
+        if len(articles_list) == 0:
+            main_element.append("No Liked Articles")
+
+    elif segmented_select_value == "bookmarked":
+        articles_list = buttons.get_bookmarked_articles(db) 
+        if len(articles_list) == 0:
+            main_element.append("No Bookmarked Articles")
     
     # loop through all articles
-    articles_list = db.get_articles(selected_topic)
     i = 0
     for article in articles_list:
+        # print(article.title)
         new_article = create_article(article)   # create article
 
-        # pare down articles_list to just ones from specified source (source_dropdown)
-        if source_dropdown.value == "All" or source_dropdown.value == article.source:
-
+        # pare down articles_list to just ones from specified source and topic 
+        if (source_dropdown.value == "All Sources" or source_dropdown.value == article.source) and (topic_dropdown.value == "All Topics" or topic_dropdown.value == article.topic):
             # restrict articles based on search term (unless it's empty)
             if search_term.lower() in article.title.lower() or search_term == "":
                 main_element.append(new_article)    # append article to <main>
@@ -293,9 +385,6 @@ def refresh_articles(keep_search_term):
         search_bar.value = ""           # clear search bar
         search_term = ""                # clear search_term
 
-    
 
-
-
-buttons.load_user_info(db)    # Update user information from Local storage
+buttons.load_user_info()    # Update user information from Local storage
 refresh_articles(False)

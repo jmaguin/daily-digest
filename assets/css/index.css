@@ -1,26 +1,79 @@
 /* Header */
 
+.header {
+    display: flex;
+}
+
 .header li {
     flex: 1;
+    flex-shrink: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: clip;
+    /* overflow: clip; */
     white-space: nowrap;
     height: 100%;
     margin: 0;
 }
 
+
 .header li:first-child {
     justify-content: left;
+    justify-self: flex-start;
     margin-left: 1.5rem;
     gap: 1rem;
 }
 
 .header li:last-child {
     justify-content: right;
+    justify-self: flex-end;
     margin-right: 1.5rem;
     padding: 0;
+}
+
+.segmented-select-li {
+    position: 50%;
+    justify-self: center;
+}
+
+.segmented-select {
+    flex: 1; 
+}
+.segment-button {
+    padding: 0.5rem;
+    
+}
+
+/* add hidden pseudo-element within width of bold text */
+.segment-button::after {
+    display: block;
+    /* Book marked is the longest so use that */
+    content: "Bookmarked";
+    font-weight: 500;
+    height: 1px;
+    color: transparent;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+.segment-button:hover{
+    background: var(--darkest-gray);
+    transform: scale(1);
+    font-weight: 500;
+}
+
+.selected-segment {
+    /* padding: 10rem; */
+    border: 3px solid var(--accent-color);
+    /* background: var(--accent-color); */
+    color: white;
+    font-weight: 500;
+}
+
+.selected-segment:hover{
+    background-color: var(--gray);
+    transform: scale(1);
+    cursor: default;
 }
 
 select {
@@ -178,4 +231,3 @@ button:hover {
 .action-button:active {
     transform: scale(0.95);
 }
-
