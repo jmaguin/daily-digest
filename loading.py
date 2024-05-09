@@ -14,7 +14,7 @@ import json
 # list of articles selected on index.html (Article objects)
 selected_articles = local_storage.retrieve_articles()
 if len(selected_articles) == 0:
-    local_storage.clear_local_storage()     # clear localStorage
+    local_storage.clear_temp_local_storage()     # clear localStorage
     window.location.href = "index.html" # redirect back to home page
 
 timer_value = 0 # starting value for timer to count from

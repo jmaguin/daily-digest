@@ -31,7 +31,10 @@
                 <a class="title" href=".">Daily Digest</a>
             </li>
             <li>
-                <button class="button" py-click="generate">Generate</button>
+                <div class="button-and-count">
+                    <button class="button" py-click="generate">Generate</button>
+                    <p class="articleCount"></p>
+                </div>
             </li>
             <li>
                 <a href="https://openai.com/chatgpt">Powered by ChatGPT</a>
@@ -42,8 +45,13 @@
                 <select name="Topic" id="topicDropdown"></select>
                 <select name="Source" id="sourceDropdown"></select>
             </li>
-            <li>
-                <p class="articleCount"></p>
+            <li class="segmented-select-li">
+                <div class="segmented-select">
+                    <button value="general" class="segment-button general selected-segment" type="button" py-click="segmented_button_clicked">General</button>
+                    <button value="for-you" class="segment-button for-you" type="button" py-click="segmented_button_clicked">For You</button>
+                    <button value="liked" class="segment-button liked" type="button" py-click="segmented_button_clicked">Liked</button>
+                    <button value="bookmarked" class="segment-button bookmarked" type="button" py-click="segmented_button_clicked">Bookmarked</button>
+                </div>
             </li>
             <li>
                 <input type="search" placeholder="Search Article..." py-keydown="search_bar_entered"/>
@@ -52,8 +60,8 @@
 
         <main></main>
         <footer>
-            <button py-click="see_less_button_clicked">&lt See Less &gt</button>
-            <button py-click="see_more_button_clicked">&lt See More &gt</button>
+            <button class="load-button" py-click="see_less_button_clicked">&lt See Less &gt</button>
+            <button class="load-button" py-click="see_more_button_clicked">&lt See More &gt</button>
         </footer>
         <script type="py" src="./index.py" config="./pyscript.toml"></script>
     </body>

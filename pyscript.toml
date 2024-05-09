@@ -1,6 +1,6 @@
 name = "Daily Digest"
 
-packages = ["sqlite3", "python-dateutil"]
+packages = ["sqlite3", "python-dateutil", "scikit-learn", "pandas"]
 
 [files]
 "/config.py" = "./config.py"
@@ -8,4 +8,6 @@ packages = ["sqlite3", "python-dateutil"]
 "/database/Database.py" = "./Database.py"
 "/database/scraper_data.db" = "./scraper_data.db"
 "/Article.py" = "./Article.py"
+"/buttons.py" = "./buttons.py"
 "/key.txt" = "./key.txt"
+
