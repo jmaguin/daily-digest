@@ -9,3 +9,5 @@ packages = ["sqlite3", "python-dateutil", "scikit-learn", "pandas"]
 "/database/scraper_data.db" = "./scraper_data.db"
 "/Article.py" = "./Article.py"
 "/buttons.py" = "./buttons.py"
+"/key.txt" = "./key.txt"
+

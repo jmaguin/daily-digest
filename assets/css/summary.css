@@ -13,7 +13,9 @@ article {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin: 1rem;
+    margin-right: 1rem;
+    margin-left: 1rem;
+    margin-bottom: 1rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
 }
@@ -28,7 +30,10 @@ article .tags {
     justify-content: space-between;
     gap: 0.4rem;
     padding-left: 1.75rem;
+}
 
+.citations li:hover {
+    text-decoration: underline;
 }
 
 div h3 {
@@ -38,6 +43,13 @@ div h3 {
 
 div ol {
     margin-left: 0.8rem;
+}
+
+p {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 0;
+    padding-bottom: 0;
 }
 
 

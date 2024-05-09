@@ -4,15 +4,6 @@ import config
 import local_storage
 from Article import *
 
-# Color palette -> from index.css
-gray = "#444444"
-dark_gray = "#313131"
-darkest_gray = "#292929"
-text_color = "#c0c0c0"
-accent_color = "#58a858"
-dark_accent_color = "#438143"
-darkest_accent_color = "#346634"
-
 # list of articles selected on index.html (Article objects)
 selected_articles = local_storage.retrieve_articles()
 if len(selected_articles) == 0:
@@ -29,9 +20,14 @@ for article in selected_articles:
     tags.append(tag)
 
 article_tag = document.querySelector("article")     # select article tag
-paragraph_tag = document.createElement("p")         # create paragraph tag
-paragraph_tag.innerText = summary 
-article_tag.append(paragraph_tag)                   # add LLM summary to webpage
+summary_list = summary.splitlines()     # split LLM summary into list of strings, each item a paragraph
+
+# Loop thru each item (paragraph) in summary_list and make a <p> tag for it
+for p in summary_list:
+    if p != "":
+        paragraph_tag = document.createElement("p")         # create paragraph tag
+        paragraph_tag.innerText = p 
+        article_tag.append(paragraph_tag)                   # add LLM summary to webpage
 
 citations = document.querySelector(".citations")     # select UL that contains citations
 # add citation for each article used in summary
