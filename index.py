@@ -226,7 +226,7 @@ def segmented_button_clicked(event):
 
     target.classList.add("selected-segment")
     
-    print(value)
+    # print(value)
 
     # Explanation: If you are switching to For You for the first time then (len(for_you_articles) == 0 and the buttons.signal tells you when the user updated the liked articles list
     if value == "for-you" and segmented_select_value != value and (len(for_you_articles) == 0 or buttons.update_for_you_signal == True):
@@ -240,7 +240,7 @@ def segmented_button_clicked(event):
         segmented_select_value = target.value
         refresh_articles(True)
 
-    print("segment selected")
+    # print("segment selected")
 
 
 
@@ -312,13 +312,13 @@ def refresh_articles(keep_search_term=True):
     main_element.innerHTML = ""     # clear main
 
     forYouSelected = True 
-    print("refresh articles called")
+    print("refresh_articles() called")
     print(segmented_select_value)
 
 
     # choose what articles list will be:
 
-    # if selected -> articles list is selected articles
+    # if selected -> append articles here, don't filter by topic and source
     if source_dropdown.value == "Selected":
         # get all articles selected
         for url in selected_urls:
@@ -343,12 +343,12 @@ def refresh_articles(keep_search_term=True):
             all_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)     # sort by date
             articles_list = all_articles
             update_all_articles = False
-            print("g hard reset")
+            print("g hard refresh")
         # if no need for update -> set articles list to all articles
         else:
             articles_list = all_articles
             update_all_articles = False
-            print("general soft reset")
+            print("general soft refresh")
 
     # if for you -> articles list is all recommended articles
     elif segmented_select_value == "for-you":
@@ -377,7 +377,7 @@ def refresh_articles(keep_search_term=True):
         if len(articles_list) == 0:
             main_element.append("No Bookmarked Articles")
     
-    # loop through all articles
+    # loop through all articles and filter by topic and source
     i = 0
     for article in articles_list:
 
@@ -398,7 +398,7 @@ def refresh_articles(keep_search_term=True):
                 if(i > max_num_displayed_articles):
                     break
         
-    
+    # clear search terms based on function argument
     if keep_search_term is False:
         search_bar = document.querySelector("input")    # select search bar
         search_bar.value = ""           # clear search bar

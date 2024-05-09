@@ -239,7 +239,7 @@ def toggle_like(selected_url, selected_button, selected_img, dislike_button, dis
     
     # If already disliked and not already liked -> remove dislike
     if already_disliked and not already_liked:
-        print("already disliked")
+        # print("already disliked")
         dislike_button.classList.remove("disliked")                     # remove class "disliked" from button
         dislike_img.src = "./assets/svg/thumbs-down-neutral.svg"        # change img color
         disliked_articles.remove(selected_url)                          # update global disliked_articles
@@ -401,8 +401,8 @@ def getRecommendedArticles(db):
                 final_list_of_articles.append(candidate)
                 # print(candidate.title)
                 # print(final_list_of_articles)
-            else:
-                print("duplicate")
+            # else:
+                # print("duplicate")
             
     # sort final list of articles
     final_list_of_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)
@@ -450,7 +450,7 @@ def getSimilarArticles(url, count):
 
 def get_bookmarked_articles(db):
     global bookmarked_articles
-    print("get_bookmarked_articles")
+    # print("get_bookmarked_articles")
     articles = []
     if len(bookmarked_articles) == 0:
         bookmarked_articles = local_storage.get_bookmarked_articles()
@@ -462,12 +462,12 @@ def get_bookmarked_articles(db):
 
 def get_liked_articles(db):
     global liked_articles
-    print("get_liked_articles")
+    # print("get_liked_articles")
     articles = []
     if len(liked_articles) == 0:
         liked_articles = local_storage.get_liked_articles()
     
-    print(liked_articles)
+    # print(liked_articles)
 
     for url in liked_articles:
         # print("hey")
