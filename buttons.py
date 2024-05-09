@@ -40,7 +40,7 @@ def setAttributes(elem, attrs):
 
 def like_clicked(event):
     # print("liked clicked")
-    global liked_articles, disliked_articles, update_for_you_signal
+    global update_for_you_signal
 
     selected_button = event.currentTarget                                                               # selected button
     selected_img = selected_button.querySelector("img")                                                 # selected img
@@ -53,7 +53,7 @@ def like_clicked(event):
     selected_img.style.transform = f"scale(0.50)"
     selected_img.style.transform = f"scale(1)"
     # Toggle the button visuals and update localStorage
-    toggle_like(liked_articles, disliked_articles, selected_url, selected_button, selected_img, dislike_button, dislike_img)
+    toggle_like(selected_url, selected_button, selected_img, dislike_button, dislike_img)
 
     update_for_you_signal = True
     # Stop Propagation in all cases
@@ -62,8 +62,7 @@ def like_clicked(event):
     
 def dislike_clicked(event):
     # print("disliked clicked")
-    global disliked_articles, liked_articles
-
+    global disliked_articles
     selected_button = event.currentTarget                                                       # selected button
     selected_img = selected_button.querySelector("img")                                         # selected img
     selected_article = selected_button.parentElement.parentElement.parentElement.parentElement  # article element of disliked article
@@ -72,7 +71,9 @@ def dislike_clicked(event):
     like_img = like_button.querySelector("img")                                                 # img of corresponding like button
 
     # Toggle the button visuals and update localStorage
-    toggle_dislike(disliked_articles, liked_articles, selected_url, selected_button, selected_img, like_button, like_img)
+    toggle_dislike(selected_url, selected_button, selected_img, like_button, like_img)
+
+    # print(disliked_articles)
 
     # Stop Propagation in all cases
     event.stopPropagation()
@@ -211,7 +212,8 @@ def create_action_bar(url):
 
 # Toggle the like button (and possibly the dislike button) visuals and update localStorage
 # Input: liked list, disliked list, URL string, like <button>, like <img>, dislike <button>, dislike <image>
-def toggle_like(liked_articles, disliked_articles, selected_url, selected_button, selected_img, dislike_button, dislike_img):
+def toggle_like(selected_url, selected_button, selected_img, dislike_button, dislike_img):
+    global liked_articles, disliked_articles
     already_liked = False
     already_disliked = False
 
@@ -256,7 +258,8 @@ def toggle_like(liked_articles, disliked_articles, selected_url, selected_button
 
 # Toggle the dislike button (and possibly the like button) visuals and update localStorage
 # Input: disliked list, liked list, URL string, dislike <button>, dislike <img>, like <button>, like <image>
-def toggle_dislike(disliked_articles, liked_articles, selected_url, selected_button, selected_img, like_button, like_img):
+def toggle_dislike(selected_url, selected_button, selected_img, like_button, like_img):
+    global liked_articles, disliked_articles
     already_disliked = False
     already_liked = False
 
@@ -338,7 +341,7 @@ def initialize_data_and_matrices(db):
 
 def getRecommendedArticles(db):
     print("Loading For You")
-    global liked_articles, disliked_articles
+    global liked_articles, disliked_articles, update_for_you_signal
     final_list_of_articles = []
     # Load database into pandas frame
     con = db.get_con()
@@ -359,17 +362,9 @@ def getRecommendedArticles(db):
     # Get indicies of data based on url
     indices = pd.Series(data.index, index=data["url"]).drop_duplicates()
 
-    num_liked_articles = len(liked_articles)
     count = 10
 
     list_of_list_of_articles = []   # a list of lists of articles
-    if num_liked_articles == 0:
-        url = "https://www.pbs.org/newshour/politics/new-york-governor-wants-to-spend-2-4-billion-to-help-deal-with-migrant-influx-in-new-budget-proposal"
-        url2 = "https://apnews.com/article/democrats-border-security-congress-trump-57f62a34ce9c4c08d6e00795fcb24764"
-        # for debugging when liked_articles is empty
-        list_of_list_of_articles.append(getSimilarArticles(url, count, data, cosine_sim, indices))
-        list_of_list_of_articles.append(getSimilarArticles(url2, count, data, cosine_sim, indices))
-
 
     # get list of similar articles for every article in liked
     for url in liked_articles:
@@ -402,6 +397,8 @@ def getRecommendedArticles(db):
             
     # sort final list of articles
     final_list_of_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)
+
+    update_for_you_signal = False
 
     return final_list_of_articles
 
@@ -464,9 +461,9 @@ def get_liked_articles(db):
     print(liked_articles)
 
     for url in liked_articles:
-        print("hey")
+        # print("hey")
         article = db.get_article(url)
-        print(article)
+        # print(article)
         articles.append(article)
 
     return articles

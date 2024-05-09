@@ -25,7 +25,7 @@ master_tags = ["politics",
                 ]
 
 # master list of all sources
-master_sources = ["All", "Selected", "PBS Newshour", "CNN", "NPR", "AP"]
+master_sources = ["All Sources", "Selected", "PBS Newshour", "CNN", "NPR", "AP"]
 
 max_selection = 3   # max num of articles that can be selected
 display_article_increment = 25  # number of displayed articles to increment by

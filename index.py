@@ -53,7 +53,7 @@ for topic in tags_and_all:
 # populate the sources dropdown
 source_dropdown = document.getElementById("sourceDropdown")  # find dropdown element
 source_dropdown.setAttribute("py-click", "source_dropdown_clicked")
-sources_and_all = ["All Sources"]
+sources_and_all = []
 sources_and_all.extend(config.master_sources)
 for art_source in sources_and_all:
     new_option = document.createElement("option")   # create option element
@@ -233,6 +233,8 @@ def segmented_button_clicked(event):
     target.classList.add("selected-segment")
     
     print(value)
+
+    # Explanation: If you are switching to For You for the first time then (len(for_you_articles) == 0 and the buttons.signal tells you when the user updated the liked articles list
     if value == "for-you" and segmented_select_value != value and (len(for_you_articles) == 0 or buttons.update_for_you_signal == True):
         update_for_you_articles = True
         segmented_select_value = target.value
@@ -319,7 +321,19 @@ def refresh_articles(keep_search_term=True):
     print("refresh articles called")
     print(segmented_select_value)
 
-    if segmented_select_value == "general":
+    # show selected articles regarless of segmented select value
+    if source_dropdown.value == "Selected":
+        # get all articles selected
+        for url in selected_urls:
+            article = db.get_article(url)
+            new_article = create_article(article)
+            new_article.style.backgroundColor = darkest_gray
+            main_element.append(new_article)    # append article to <main>
+
+            articles_list.append(article)
+
+
+    elif segmented_select_value == "general":
         if update_all_articles == True:
             all_articles = db.get_all_articles()
             all_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)
@@ -331,7 +345,7 @@ def refresh_articles(keep_search_term=True):
         update_all_articles = False
 
     elif segmented_select_value == "for-you":
-        if update_for_you_articles == True: 
+        if update_for_you_articles == True and len(buttons.liked_articles) != 0: 
             for_you_articles = buttons.getRecommendedArticles(db)
             print("fy hard refresh")
         else:
@@ -353,11 +367,11 @@ def refresh_articles(keep_search_term=True):
     # loop through all articles
     i = 0
     for article in articles_list:
-        # print(article.title)
+
         new_article = create_article(article)   # create article
 
         # pare down articles_list to just ones from specified source and topic 
-        if (source_dropdown.value == "All Sources" or source_dropdown.value == article.source) and (topic_dropdown.value == "All Topics" or topic_dropdown.value == article.topic):
+        if (source_dropdown.value == "All Sources" or source_dropdown.value == article.source) and (topic_dropdown.value == "All Topics" or topic_dropdown.value == article.tag):
             # restrict articles based on search term (unless it's empty)
             if search_term.lower() in article.title.lower() or search_term == "":
                 main_element.append(new_article)    # append article to <main>
@@ -371,14 +385,6 @@ def refresh_articles(keep_search_term=True):
                 if(i > max_num_displayed_articles):
                     break
         
-        # if user only wants to see selected articles
-        if source_dropdown.value == "Selected":
-
-            # re-do all styling for articles that have been selected
-            for url in selected_urls:
-                if(url == article.url):
-                    new_article.style.backgroundColor = darkest_gray
-                    main_element.append(new_article)    # append article to <main>
     
     if keep_search_term is False:
         search_bar = document.querySelector("input")    # select search bar
