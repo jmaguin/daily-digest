@@ -325,7 +325,10 @@ def refresh_articles(keep_search_term=True):
             main_element.append(new_article)    # append article to <main>
 
             articles_list.append(article)
-
+    elif topic_dropdown.value != "All Topics":
+        print(f"topic: {topic_dropdown.value}")
+        articles_list = db.get_articles(topic_dropdown.value)
+        articles_list.sort(key=lambda x: dateparser.parse(x.date), reverse=True)
 
     elif segmented_select_value == "general":
         if update_all_articles == True:
