@@ -367,12 +367,14 @@ def initialize_data_and_matrices(db):
 
 def getRecommendedArticles(db):
     print("Loading For You")
+    global firstTime
     final_list_of_articles = []
     count = 10
     list_of_list_of_articles = []   # a list of lists of articles
 
     if firstTime == True:
         initialize_data_and_matrices(db)
+        firstTime = False
 
     # get list of similar articles for every article in liked
     for url in liked_articles:
