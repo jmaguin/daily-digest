@@ -9,6 +9,8 @@ from Article import *
 from pyodide.ffi import create_proxy
 import config
 
+from summarizer import *
+
 
 
 # Color palette -> from index.css
@@ -75,6 +77,8 @@ interval_id = setInterval(timer_proxy, 1000)  # call update_timer() every 1sec
 
 
 # LLM Code here ------------------------------------------->
+summarizer = gpt_summarizer()
+
 
 
 

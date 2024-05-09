@@ -7,3 +7,4 @@ packages = ["sqlite3", "python-dateutil"]
 "/database/Database.py" = "./Database.py"
 "/database/scraper_data.db" = "./scraper_data.db"
 "/Article.py" = "./Article.py"
+"/gpt_summarizer/summarizer.py" = "./gpt_summarizer/summarizer.py"
