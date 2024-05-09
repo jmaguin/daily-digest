@@ -3,8 +3,8 @@ import sqlite3
 import sys
 sys.path.append("../daily_digest/Article")
 from Article import *
-import dateutil.parser
-import datetime
+# import dateutil.parser
+# import datetime
 
 # Class for the database that stores all web scraper data.
 class Database:
@@ -30,6 +30,9 @@ class Database:
         self.cur.execute("CREATE TABLE IF NOT EXISTS articles(tag, title, source, date, url, content)")
         self.cur.execute("CREATE INDEX IF NOT EXISTS tag_idx ON articles(tag)")
 
+    def get_con(self):
+        return self.con
+    
     # Insert article into database
     # Ensures no duplicates
     # article of type Article
@@ -44,13 +47,24 @@ class Database:
     # Returns empty list if no matches
     def get_articles(self, tag):
         res = self.cur.execute("SELECT * FROM articles WHERE tag='%s'" % tag)
+            
         tup_list = res.fetchall()   # list of article tuples
         art_list = []   # list of article objects
         for tup in tup_list:
             this_article = Article(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
             art_list.append(this_article)
         return art_list
-    
+
+    def get_all_articles(self):
+        res = self.cur.execute("SELECT * FROM articles")
+        
+        tup_list = res.fetchall()   # list of article tuples
+        art_list = []   # list of article objects
+        for tup in tup_list:
+            this_article = Article(tup[0], tup[1], tup[2], tup[3], tup[4], tup[5])
+            art_list.append(this_article)
+        return art_list
+
     # Get single article from database by URL
     # Returns Article object
     # Returns None if no matches

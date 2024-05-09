@@ -1,26 +1,79 @@
 /* Header */
 
+.header {
+    display: flex;
+}
+
 .header li {
     flex: 1;
+    flex-shrink: 1;
     display: flex;
     justify-content: center;
     align-items: center;
-    overflow: clip;
+    /* overflow: clip; */
     white-space: nowrap;
     height: 100%;
     margin: 0;
 }
 
+
 .header li:first-child {
     justify-content: left;
+    justify-self: flex-start;
     margin-left: 1.5rem;
     gap: 1rem;
 }
 
 .header li:last-child {
     justify-content: right;
+    justify-self: flex-end;
     margin-right: 1.5rem;
     padding: 0;
+}
+
+.segmented-select-li {
+    position: 50%;
+    justify-self: center;
+}
+
+.segmented-select {
+    flex: 1; 
+}
+.segment-button {
+    padding: 0.5rem;
+    
+}
+
+/* add hidden pseudo-element within width of bold text */
+.segment-button::after {
+    display: block;
+    /* Book marked is the longest so use that */
+    content: "Bookmarked";
+    font-weight: 500;
+    height: 1px;
+    color: transparent;
+    overflow: hidden;
+    visibility: hidden;
+}
+
+.segment-button:hover{
+    background: var(--darkest-gray);
+    transform: scale(1);
+    font-weight: 500;
+}
+
+.selected-segment {
+    /* padding: 10rem; */
+    border: 3px solid var(--accent-color);
+    /* background: var(--accent-color); */
+    color: white;
+    font-weight: 500;
+}
+
+.selected-segment:hover{
+    background-color: var(--gray);
+    transform: scale(1);
+    cursor: default;
 }
 
 select {
@@ -56,11 +109,17 @@ article h3 a:hover{
     color: #87CEFA    
 }
 
+/* Article title font color */
+article h3 a {
+    color: white;
+}
+
 /* Articles */
 article {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
+    justify-content: space-between;
     flex-basis: 29%;
     margin: 1rem;
     padding-left: 0.5rem;
@@ -72,16 +131,67 @@ article {
     user-select: none;
 }
 
-article:hover {
+.article-main {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+/* this is now implemented using event listeners */
+/* article:hover {
     transition: 0.1s;
     transform: scale(1.05);
     cursor: pointer;
-}
+} */
 
-article:active {
+/* article:active {
+    
     transition: 0.1s;
     transform: scale(0.99);
+    
+} */
+
+.actions-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    min-height: 35px;
+    width: 100%;
+    margin-bottom: 0.5rem;
+    margin-top: 0.5rem;
 }
+
+.actions-ul {
+    all: unset;
+
+    display: flex;
+}
+
+.actions-ul-left > li > button {
+    margin-right: 1rem
+}
+
+.action-li {
+    all: unset;
+
+}
+
+.action-button {
+    all: unset;
+    display: flex;
+    flex-direction: row;
+    width: 40px;
+    height: 40px;
+    background-size: cover;
+}
+
+
+.action-button img {
+    width: 80%;
+    height: 80%;
+    margin: auto;
+}
+
 
 footer {
     display: flex;
@@ -112,4 +222,12 @@ button {
 button:hover {
     transition: 0.1s;
     transform: scale(1.05);
+}
+
+.action-button:hover {
+    transition: 0.1s;
+    transform: scale(1.05);
+}
+.action-button:active {
+    transform: scale(0.95);
 }

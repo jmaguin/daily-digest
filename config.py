@@ -25,9 +25,20 @@ master_tags = ["politics",
                 ]
 
 # master list of all sources
-master_sources = ["All", "Selected", "PBS Newshour", "CNN", "NPR", "AP"]
+master_sources = ["All Sources", "Selected", "PBS Newshour", "CNN", "NPR", "AP"]
 
 max_selection = 3   # max num of articles that can be selected
 display_article_increment = 25  # number of displayed articles to increment by
 
-localStorage_lenth_key = "num_of_urls"  # key of localStorage value with total number of URLs saved
+default_max_possible_articles_shown = 200
+
+
+# Color palette -> from index.css
+gray = "#444444"
+dark_gray = "#313131"
+darkest_gray = "#292929"
+text_color = "#c0c0c0"
+accent_color = "#58a858"
+dark_accent_color = "#438143"
+darkest_accent_color = "#346634"
+

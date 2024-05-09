@@ -22,4 +22,9 @@ class Article:
         return_string = "[%s]\n%s - %s\n\"%s\"\n%s\n%s" % (self.tag, self.source, self.date, self.title, self.content, self.url)
         return return_string
 
-
+    # equality operator checks if strings are equal
+    def __eq__(self, other):
+        if self.tag == other.tag and self.title == other.title and self.source == other.source and self.date == other.date and self.url == other.url and self.content == other.content:
+            return True
+        else:
+            return False

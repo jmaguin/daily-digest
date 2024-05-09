@@ -2,13 +2,16 @@ from js import localStorage
 from js import setInterval
 from js import clearInterval
 from js import window
+from js import console, XMLHttpRequest
 from pyscript import document
 from pyweb import pydom
-from Database import *
 from Article import *
 from pyodide.ffi import create_proxy
 import config
+import local_storage
+import json
 
+<<<<<<< HEAD
 from summarizer import *
 
 
@@ -23,35 +26,17 @@ dark_accent_color = "#438143"
 darkest_accent_color = "#346634"
 
 selected_articles = []  # list of articles selected on index.html (Article objects)
+=======
+# list of articles selected on index.html (Article objects)
+selected_articles = local_storage.retrieve_articles()
+if len(selected_articles) == 0:
+    local_storage.clear_temp_local_storage()     # clear localStorage
+    window.location.href = "index.html" # redirect back to home page
+>>>>>>> main
 
 timer_value = 0 # starting value for timer to count from
 timer_element = document.querySelector("h2")   # select <h2>
 
-# Begin connection to database
-db = Database()
-
-# get all selected articles using URLs from localStorage
-num_of_urls = localStorage.getItem(config.localStorage_lenth_key)
-
-# if num_of_urls is not in local storage do not try to get the urls
-# this check is needed to prevent an error message from showing up
-if int(num_of_urls) == 0:
-    print("localStorage_length_key not found.")
-    localStorage.clear()    # clear the localStorage
-    window.location.href = "index.html" # redirect back to home page
-else:
-    # loop and add Article objects to selected_articles
-    for i in range(int(num_of_urls)):
-        url = localStorage.getItem("url" + str(i))  # retrieve url from localStorage
-        this_article = db.get_article(url)  # turn URL into Article object
-
-        # ensure article was found
-        if this_article is None:
-            print("Article could not be located in database.\nURL: " + url)
-        else:
-            selected_articles.append(this_article)
-
-localStorage.clear()    # clear the localStorage
 
 # Timer ---------------------------------------
 # refresh timer
@@ -76,13 +61,61 @@ interval_id = setInterval(timer_proxy, 1000)  # call update_timer() every 1sec
 # ----------------------------------------------------
 
 
+<<<<<<< HEAD
 # LLM Code here ------------------------------------------->
 summarizer = gpt_summarizer()
 
+=======
+# LLM Code ------------------------------------------->
+
+# Get API Key from file
+f = open("key.txt", "r")
+OPENAI_API_KEY = f.read()
+
+# LLM variables
+model = "gpt-4"
+llm_instructions = "You will be provided with a number of news articles. Your task is to summarize all key points mentioned in them in 5 paragraphs or less."
+selected_articles_content = ""
+
+# Iterate thru selected_articles and combine their content
+for article in selected_articles:
+    article.content = article.content[:250].strip().replace("\n", " ")
+    selected_articles_content = selected_articles_content + article.content
+
+messages = [
+    {"role": "system", "content": llm_instructions},
+    {"role": "user", "content": selected_articles_content}
+]
+temperature = 0.7
+max_tokens = 2000
+top_p = 1
+>>>>>>> main
 
 
+# HTTP Request ---------------------------------->
 
+xhr = XMLHttpRequest.new()
+xhr.open("POST", "https://api.openai.com/v1/chat/completions", False)
+xhr.setRequestHeader("Content-Type", "application/json")
+xhr.setRequestHeader("Authorization", "Bearer " + OPENAI_API_KEY)
+
+data = json.dumps({
+    "model": model,
+    "messages": messages,
+    "temperature": temperature,
+    "max_tokens": max_tokens,
+    "top_p": top_p,
+})
+
+xhr.send(data)
+
+json_response = json.loads(xhr.response)
+print(json_response)
+summary = json_response["choices"][0]["message"]["content"]
+
+# -------------------------------------<
+local_storage.save_articles_summary(summary)    # save summary to localStorage
+clearInterval(interval_id)  # stop counter
+window.location.href = "summary.html" # redirect to summary page
 # ------------------------------------------------------------<
 
-# Uncomment once LLM Code done
-# clearInterval(interval_id)
