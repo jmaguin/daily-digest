@@ -306,7 +306,7 @@ def create_article(article):
 # keep_search_term: if True, maintain article sorting by the search term
 def refresh_articles(keep_search_term=True):
     global search_term, for_you_articles, all_articles, update_all_articles, update_for_you_articles, segmented_select_value, db
-    articles_list = []  # list of 
+    articles_list = []  # list of articles 
     
     main_element = document.querySelector("main")   # select <main>
     main_element.innerHTML = ""     # clear main
@@ -315,7 +315,10 @@ def refresh_articles(keep_search_term=True):
     print("refresh articles called")
     print(segmented_select_value)
 
-    # show selected articles regarless of segmented select value
+
+    # choose what articles list will be:
+
+    # if selected -> articles list is selected articles
     if source_dropdown.value == "Selected":
         # get all articles selected
         for url in selected_urls:
@@ -324,23 +327,30 @@ def refresh_articles(keep_search_term=True):
             new_article.style.backgroundColor = config.darkest_gray
             main_element.append(new_article)    # append article to <main>
 
-            articles_list.append(article)
-    elif topic_dropdown.value != "All Topics":
-        print(f"topic: {topic_dropdown.value}")
-        articles_list = db.get_articles(topic_dropdown.value)
-        articles_list.sort(key=lambda x: dateparser.parse(x.date), reverse=True)
+            articles_list = []
 
+    # if general -> articles list is all articles or articles of a certain topic
     elif segmented_select_value == "general":
-        if update_all_articles == True:
+        # if general selected and certain topic selected -> query database by tag (this is faster than paring down from all_articles)
+        if topic_dropdown.value != "All Topics":
+            print(f"topic: {topic_dropdown.value}")
+            articles_list = db.get_articles(topic_dropdown.value)
+            articles_list.sort(key=lambda x: dateparser.parse(x.date), reverse=True)    # sort by date
+
+        # if all_articles needs to be updated -> update all articles and set as articles list
+        elif update_all_articles == True:
             all_articles = db.get_all_articles()
-            all_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)
+            all_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)     # sort by date
+            articles_list = all_articles
+            update_all_articles = False
             print("g hard reset")
+        # if no need for update -> set articles list to all articles
         else:
+            articles_list = all_articles
+            update_all_articles = False
             print("general soft reset")
 
-        articles_list = all_articles
-        update_all_articles = False
-
+    # if for you -> articles list is all recommended articles
     elif segmented_select_value == "for-you":
         if update_for_you_articles == True and len(buttons.liked_articles) != 0: 
             for_you_articles = buttons.getRecommendedArticles(db)
@@ -351,6 +361,7 @@ def refresh_articles(keep_search_term=True):
         update_for_you_articles = False
         articles_list = for_you_articles
 
+    # if liked -> articles list is liked articles
     elif segmented_select_value == "liked":
         articles_list = buttons.get_liked_articles(db) 
         articles_list.reverse()        # reverse so that recently liked goes on top
@@ -358,6 +369,7 @@ def refresh_articles(keep_search_term=True):
         if len(articles_list) == 0:
             main_element.append("No Liked Articles")
 
+    # if bookmarked -> articles list is liked articles
     elif segmented_select_value == "bookmarked":
         articles_list = buttons.get_bookmarked_articles(db) 
         articles_list.reverse()         # reverse so that recently bookmarked goes on top
