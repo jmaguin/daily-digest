@@ -22,7 +22,11 @@ bookmarked_articles = [] # keeps track of bookmarked articles
 
 update_for_you_signal = False   # signal checked in index.py to see if new likes have been added -> need to recalculate forYou list
 
-article_data = None
+firstTime = True
+
+aData = None    # article data
+tfidf = None
+tfidf_matrix = None
 cosine_sim = None
 indices = None
 
@@ -338,39 +342,42 @@ def load_user_info():
 
 def initialize_data_and_matrices(db):
     print("init data")
+    global liked_articles, disliked_articles, update_for_you_signal, aData, tfidf, tfidf_matrix, cosine_sim, indices
+    # Load database into pandas frame
+    con = db.get_con()
+
+    if firstTime == True:
+        aData = pd.read_sql_query("SELECT * from articles", con) # remember: "title", "url", "content", "date"
+
+        # Create TfidVectorizer object to transform data into a Tf-idf representation
+        
+        tfidf = TfidfVectorizer(stop_words="english", max_features=20)
+
+        # Combine title and content into a single string
+        aData["titlecontent"] = aData["content"].astype(str) + " " + aData["title"].astype(str)
+        aData["titlecontent"] = aData["titlecontent"].fillna("")
+        tfidf_matrix = tfidf.fit_transform(aData["titlecontent"])
+
+        # Calculate the cosine similarity matrix between articles only the first time
+        cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
+        # print(type(cosine_sim))
+        
+        # Get indicies of aData based on url
+        indices = pd.Series(aData.index, index=aData["url"]).drop_duplicates()
 
 def getRecommendedArticles(db):
     print("Loading For You")
-    global liked_articles, disliked_articles, update_for_you_signal
     final_list_of_articles = []
-    # Load database into pandas frame
-    con = db.get_con()
-    data = pd.read_sql_query("SELECT * from articles", con) # remember: "title", "url", "content", "date"
-
-    # Create TfidVectorizer object to transform data into a Tf-idf representation
-    tfidf = TfidfVectorizer(stop_words="english", max_features=20)
-
-    # Combine title and content into a single string
-    data["titlecontent"] = data["content"].astype(str) + " " + data["title"].astype(str)
-    data["titlecontent"] = data["titlecontent"].fillna("")
-    tfidf_matrix = tfidf.fit_transform(data["titlecontent"])
-
-    # Calculate the cosine similarity matrix between articles
-    cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-    # print(type(cosine_sim))
-    
-    # Get indicies of data based on url
-    indices = pd.Series(data.index, index=data["url"]).drop_duplicates()
-
     count = 10
-
     list_of_list_of_articles = []   # a list of lists of articles
+
+    if firstTime == True:
+        initialize_data_and_matrices(db)
 
     # get list of similar articles for every article in liked
     for url in liked_articles:
-        list_of_list_of_articles.append(getSimilarArticles(url, count, data, cosine_sim, indices))
+        list_of_list_of_articles.append(getSimilarArticles(url, count))
     
-
     if len(list_of_list_of_articles) == 0:
         return []
     
@@ -403,8 +410,8 @@ def getRecommendedArticles(db):
     return final_list_of_articles
 
 # gets 10 similar articles specified by url
-def getSimilarArticles(url, count, data, cosine_sim, indices):
-
+def getSimilarArticles(url, count):
+    global aData, cosine_sim, indices
     # sample title and url
     # title = "New York governor wants to spend $2.4 billion to help deal with migrant influx in new budget proposal"
     # url = "https://www.pbs.org/newshour/politics/new-york-governor-wants-to-spend-2-4-billion-to-help-deal-with-migrant-influx-in-new-budget-proposal"
@@ -428,12 +435,12 @@ def getSimilarArticles(url, count, data, cosine_sim, indices):
     article_tuple_list = []
     added = 0
     for i, score in sim_scores:
-        # print(data["title"][i])
+        # print(aData["title"][i])
         if added >= count:
             break
         # don't add the liked article itself
-        elif data["url"][i] != url:
-            article = Article(data["tag"][i], data["title"][i], data["source"][i], data["date"][i], data["url"][i], data["content"][i])
+        elif aData["url"][i] != url:
+            article = Article(aData["tag"][i], aData["title"][i], aData["source"][i], aData["date"][i], aData["url"][i], aData["content"][i])
             article_tuple_list.append(article)
             added += 1
     

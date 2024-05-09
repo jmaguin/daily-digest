@@ -356,11 +356,15 @@ def refresh_articles(keep_search_term=True):
 
     elif segmented_select_value == "liked":
         articles_list = buttons.get_liked_articles(db) 
+        articles_list.reverse()        # reverse so that recently liked goes on top
+
         if len(articles_list) == 0:
             main_element.append("No Liked Articles")
 
     elif segmented_select_value == "bookmarked":
         articles_list = buttons.get_bookmarked_articles(db) 
+        articles_list.reverse()         # reverse so that recently bookmarked goes on top
+
         if len(articles_list) == 0:
             main_element.append("No Bookmarked Articles")
     
