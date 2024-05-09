@@ -28,6 +28,8 @@ for_you_articles = []              # list of articles for you
 update_all_articles = True         # True when the all_articles list needs to be updated
 update_for_you_articles = True     # True when the for_you list needs to be updated
 
+print("index.py loaded")
+
 # Populate dropdowns in the header -------------------------------------------------
 
 # populate the topics dropdown
@@ -341,25 +343,45 @@ def refresh_articles(keep_search_term=True):
         elif update_all_articles == True:
             all_articles = db.get_all_articles()
             all_articles.sort(key=lambda x: dateparser.parse(x.date), reverse=True)     # sort by date
-            articles_list = all_articles
             update_all_articles = False
             print("g hard refresh")
+            
+            articles_list = all_articles
         # if no need for update -> set articles list to all articles
         else:
-            articles_list = all_articles
             update_all_articles = False
             print("general soft refresh")
 
+            articles_list = all_articles
+
     # if for you -> articles list is all recommended articles
     elif segmented_select_value == "for-you":
-        if update_for_you_articles == True and len(buttons.liked_articles) != 0: 
+
+        # if no liked articles -> display message
+        if len(buttons.liked_articles) == 0:
+            message = document.createElement("p")
+            message.classList.add("message")
+            message.textContent = "Start liking articles to get recommendations"
+            main_element.append(message)
+
+            articles_list = []
+
+        # if need to update articles -> do so
+        elif update_for_you_articles == True: 
             for_you_articles = buttons.getRecommendedArticles(db)
             print("fy hard refresh")
+
+            articles_list = for_you_articles
+
+        
+        # if no need to update articles -> set articles list as for you
         else:
             print("fy soft reset")
+
+            articles_list = for_you_articles
+
     
         update_for_you_articles = False
-        articles_list = for_you_articles
 
     # if liked -> articles list is liked articles
     elif segmented_select_value == "liked":
@@ -367,7 +389,10 @@ def refresh_articles(keep_search_term=True):
         articles_list.reverse()        # reverse so that recently liked goes on top
 
         if len(articles_list) == 0:
-            main_element.append("No Liked Articles")
+            message = document.createElement("p")
+            message.classList.add("message")
+            message.textContent = "No Liked Articles"
+            main_element.append(message)
 
     # if bookmarked -> articles list is liked articles
     elif segmented_select_value == "bookmarked":
@@ -375,7 +400,10 @@ def refresh_articles(keep_search_term=True):
         articles_list.reverse()         # reverse so that recently bookmarked goes on top
 
         if len(articles_list) == 0:
-            main_element.append("No Bookmarked Articles")
+            message = document.createElement("p")
+            message.classList.add("message")
+            message.textContent = "No Bookmarked Articles"
+            main_element.append(message)
     
     # loop through all articles and filter by topic and source
     i = 0

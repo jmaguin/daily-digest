@@ -102,6 +102,16 @@ main {
     margin-right: 1rem;
 }
 
+/* <p> Message that displays when no likes, no bookmarks, no for you */
+main .message {
+    font-size: 3rem;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+
+}
+
 /* Link */
 article h3 a:hover{
     transition:0.1s;
