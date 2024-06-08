@@ -234,17 +234,23 @@ def segmented_button_clicked(event):
     if value == "for-you" and segmented_select_value != value and (len(for_you_articles) == 0 or buttons.update_for_you_signal == True):
         update_for_you_articles = True
         segmented_select_value = target.value
-        refresh_articles(True)
+        refresh_articles(False)
     elif value == "general" and segmented_select_value != value:
         segmented_select_value = target.value
-        refresh_articles(True)
+        refresh_articles(False)
     else:
         segmented_select_value = target.value
-        refresh_articles(True)
+        refresh_articles(False)
 
     # print("segment selected")
 
+def clear_search_term():
+    global search_term
 
+    # clear search terms based on function argument
+    search_bar = document.querySelector("input")    # select search bar
+    search_bar.value = ""           # clear search bar
+    search_term = ""                # clear search_term
 
 
 # Creates an article HTML element
@@ -354,6 +360,13 @@ def refresh_articles(keep_search_term=True):
 
             articles_list = all_articles
 
+        # if need to update for_you articles -> do so
+        if update_for_you_articles == True: 
+            for_you_articles = buttons.getRecommendedArticles(db)
+            print("fy hard refresh")
+
+            articles_list = for_you_articles
+
     # if for you -> articles list is all recommended articles
     elif segmented_select_value == "for-you":
 
@@ -366,13 +379,12 @@ def refresh_articles(keep_search_term=True):
 
             articles_list = []
 
-        # if need to update articles -> do so
+        # if need to update for_you articles -> do so
         elif update_for_you_articles == True: 
             for_you_articles = buttons.getRecommendedArticles(db)
             print("fy hard refresh")
 
             articles_list = for_you_articles
-
         
         # if no need to update articles -> set articles list as for you
         else:
@@ -387,6 +399,8 @@ def refresh_articles(keep_search_term=True):
     elif segmented_select_value == "liked":
         articles_list = buttons.get_liked_articles(db) 
         articles_list.reverse()        # reverse so that recently liked goes on top
+
+        # print(f"articles list reversed: {articles_list}")
 
         if len(articles_list) == 0:
             message = document.createElement("p")
@@ -428,10 +442,7 @@ def refresh_articles(keep_search_term=True):
         
     # clear search terms based on function argument
     if keep_search_term is False:
-        search_bar = document.querySelector("input")    # select search bar
-        search_bar.value = ""           # clear search bar
-        search_term = ""                # clear search_term
-
+        clear_search_term()
 
 buttons.load_user_info()    # Update user information from Local storage
 refresh_articles(False)

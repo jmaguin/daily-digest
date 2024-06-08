@@ -351,7 +351,7 @@ def initialize_data_and_matrices(db):
 
         # Create TfidVectorizer object to transform data into a Tf-idf representation
         
-        tfidf = TfidfVectorizer(stop_words="english", max_features=20)
+        tfidf = TfidfVectorizer(stop_words="english", max_features=None)
 
         # Combine title and content into a single string
         aData["titlecontent"] = aData["content"].astype(str) + " " + aData["title"].astype(str)
@@ -470,6 +470,7 @@ def get_liked_articles(db):
     # print(liked_articles)
 
     for url in liked_articles:
+        # print(f"get_liked-articles url: ${url}")
         # print("hey")
         article = db.get_article(url)
         # print(article)
